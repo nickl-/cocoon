@@ -1,0 +1,8 @@
+%div{id: nested.pluralize.dasherize, class: 'nested-group'}
+  .panel
+    .panel-heading
+      %b= nested.pluralize.titleize
+    = f.semantic_fields_for nested.pluralize.to_sym do |item|
+      = render "#{nested}_fields", f: item
+    .panel-footer
+      = link_to_add_association "Add #{nested.titleize}", f, nested.pluralize.to_sym, class: 'btn btn-default btn-mini'

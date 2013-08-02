@@ -15,4 +15,17 @@ module Cocoon
     end
 
   end
+
+  class Railtie < ::Rails::Engine
+    if config.respond_to?(:app_generators)
+      config.app_generators.scaffold_controller = :cocoon_scaffold_controller
+      config.app_generators.scaffold = :cocoon_scaffold
+      config.app_generators.orm = :cocoon_model
+    else
+      config.generators.scaffold_controller = :cocoon_scaffold_controller
+      config.generators.scaffold = :cocoon_scaffold
+      config.generators.orm = :cocoon_model
+    end
+  end
+
 end

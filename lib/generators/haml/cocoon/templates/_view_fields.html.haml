@@ -1,0 +1,8 @@
+%dl{class: 'dl-horizontal'}
+  - item.attributes.each do |name, value|
+    - unless name[/id$|at$/]
+      %dt= name
+      - if respond_to? "#{value.class.to_s.underscore}_view"
+        %dd= send "#{value.class.to_s.underscore}_view", value
+      - else
+        %dd= value

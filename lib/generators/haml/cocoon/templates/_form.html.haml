@@ -1,0 +1,29 @@
+= semantic_form_for @<%= singular_table_name %>, html: {class: 'form-horizontal'} do |f|
+
+  -if @<%= singular_table_name %>.errors.any?
+    - @<%= singular_table_name %>.errors.full_messages.each do |msg|
+      .alert{class: 'alert-danger'}
+        %button{class: 'close', title: 'Close notification', 'data-dismiss' => 'alert'} ✖
+        = msg
+
+  #<%= singular_table_name %>
+    .panel
+      .panel-heading
+        %b <%= title_name %>
+      = f.inputs do
+<% for attribute in attributes -%>
+<%   unless %w(references belongs_to).include? attribute.type.to_s || attribute =~ /_attributes$/ -%>
+        = f.input :<%= attribute.name %>
+<%   end -%>
+<% end -%>
+      %br
+<% for ref in references -%>
+      = render 'nests', f: f, nested: '<%= ref %>'
+<% end -%>
+
+      .panel-footer
+        .col-3 &nbsp;
+        .col-offset-3
+          = f.actions do
+            = f.action :submit, as: :input, button_html: {class: 'btn btn-primary'}
+            = f.action :reset, as: :input, button_html: {class: 'btn btn-inverse', :disable_with => 'Please wait ...'}

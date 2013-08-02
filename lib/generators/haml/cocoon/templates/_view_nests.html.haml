@@ -1,0 +1,8 @@
+%div{id: nested.pluralize.dasherize, class: 'nested-group'}
+  - unless f.blank?
+    .panel
+      .panel-heading
+        %b= nested.pluralize.titleize
+      - f.each do |item|
+        = render "view_#{nested}_fields", item: item
+        %hr
