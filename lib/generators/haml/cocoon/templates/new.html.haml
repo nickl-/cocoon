@@ -1,11 +1,18 @@
 .row
-  .cel-lg-12
-    %ul{class: "nav nav-pills"}
-      %li{class: "active"}= link_to 'New <%= title_name %>', new_<%= singular_table_name %>_path
-      %li= link_to 'All <%= plural_title_name %>', <%= table_name %>_path
-      %li{class: "disabled"}= link_to 'Edit this <%= title_name %>', '#'
-      %li{class: "disabled"}= link_to 'Show this <%= title_name %>', '#'
+  .col-10
+    .subnav
+      %ul.nav.nav-pills
+        %li.active= link_to 'New <%= title_name %>', new_<%= singular_table_name %>_path
+        %li= link_to 'All <%= plural_title_name %>', <%= table_name %>_path
+        %li.disabled= link_to 'Edit this <%= title_name %>', '#'
+        %li.disabled= link_to 'Show this <%= title_name %>', '#'
 
-%h1 New <%= title_name %>
+    %h1 New <%= title_name %>
 
-= render 'form'
+    = render 'form'
+
+  .col-2
+    .well.nav.sidebar-nav
+      %h3 Sidebar
+      %ul.nav.nav-list
+        %li= link_to "<%= title_name %> #{@<%= singular_table_name %>.id}", "#<%= singular_table_name %>_#{@<%= singular_table_name %>.id}"

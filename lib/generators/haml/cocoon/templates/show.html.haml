@@ -1,27 +1,36 @@
 .row
-  .cel-lg-12
-    %ul{class: "nav nav-pills"}
-      %li= link_to 'New <%= title_name %>', new_<%= singular_table_name %>_path
-      %li= link_to 'All <%= plural_title_name %>', <%= table_name %>_path
-      %li= link_to 'Edit this <%= title_name %>', edit_<%= singular_table_name %>_path(@<%= singular_table_name %>)
-      %li{class: "active"}= link_to 'Show this <%= title_name %>', @<%= singular_table_name %>
+  .col-10
+    .sub-nav
+      %ul.nav.nav-pills
+        %li= link_to 'New <%= title_name %>', new_<%= singular_table_name %>_path
+        %li= link_to 'All <%= plural_title_name %>', <%= table_name %>_path
+        %li= link_to 'Edit this <%= title_name %>', edit_<%= singular_table_name %>_path(@<%= singular_table_name %>)
+        %li.active= link_to 'Show this <%= title_name %>', @<%= singular_table_name %>
 
-%h1 Show <%= title_name %>
+    %h1 Show <%= title_name %>
 
-- unless notice.blank?
-  .alert{class: 'alert-success'}
-    %button{class: 'close', title: 'Close notification', 'data-dismiss' => 'alert'} ✖
-    = notice
+    - unless notice.blank?
+      .alert.alert-success
+        %button.close{title: 'Close notification', data: {dismiss: 'alert'}} ✖
+        = notice
 
-#<%= singular_table_name %>
-  .panel
-    .panel-heading
-      %b <%= title_name %>
-    %dl{class: 'dl-horizontal'}
+    %section[@<%= singular_table_name %>]
+      .panel
+        .panel-heading
+          %b <%= title_name %>
+        %dl.dl-horizontal
 <% for attribute in attributes -%>
-      %dt <%= attribute.human_name %>
-      %dd= respond_to?("<%= attribute.type %>_view") ? <%= attribute.type %>_view(@<%= singular_table_name %>.<%= attribute.name %>) : @<%= singular_table_name %>.<%= attribute.name %>
+          %dt <%= attribute.human_name %>
+          %dd= respond_to?("<%= attribute.type %>_view") |
+              ? <%= attribute.type %>_view(@<%= singular_table_name %>.<%= attribute.name %>) |
+              : @<%= singular_table_name %>.<%= attribute.name %> |
 <% end -%>
 <% for ref in references -%>
-    = render 'view_nests', f: @<%= singular_table_name %>.<%= ref.pluralize %>, nested: '<%= ref %>'
+        = render 'view_nests', f: @<%= singular_table_name %>.<%= ref.pluralize %>, nested: '<%= ref %>'
 <% end -%>
+
+  .col-2
+    .well#sidebar-nav
+      %h3 Sidebar
+      %ul.nav.nav-list
+        %li= link_to "<%= title_name %> #{@<%= singular_table_name %>.id}", "#<%= singular_table_name %>_#{@<%= singular_table_name %>.id}"

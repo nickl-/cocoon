@@ -2,11 +2,11 @@
 
   -if @<%= singular_table_name %>.errors.any?
     - @<%= singular_table_name %>.errors.full_messages.each do |msg|
-      .alert{class: 'alert-danger'}
-        %button{class: 'close', title: 'Close notification', 'data-dismiss' => 'alert'} ✖
+      .alert.alert-danger
+        %button.close{title: 'Close this notification', data: {dismiss: 'alert'}} ✖
         = msg
 
-  #<%= singular_table_name %>
+  %section[@<%= singular_table_name %>]
     .panel
       .panel-heading
         %b <%= title_name %>
@@ -26,4 +26,5 @@
         .col-offset-3
           = f.actions do
             = f.action :submit, as: :input, button_html: {class: 'btn btn-primary'}
-            = f.action :reset, as: :input, button_html: {class: 'btn btn-inverse', :disable_with => 'Please wait ...'}
+            = f.action :reset, as: :input, button_html: {class: 'btn btn-inverse',
+                       :disable_with => 'Please wait ...'}

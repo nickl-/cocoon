@@ -1,6 +1,8 @@
-.nested-fields{class: 'row'}
+%section.row.nested-fields[f.object]
   = f.inputs do
-    = link_to_remove_association "&times;".html_safe, f, class: 'close', title: 'Destroy <%= ref_name.titleize %>', data: { confirm: 'Are you sure you want to destroy this entity and all its refren.' }
+    = link_to_remove_association '✖', f,
+          class: 'close', title: 'Destroy <%= ref_name.titleize %>',
+          data: {confirm: 'Are you sure you want to destroy this entity and all its children.'}
     %br
 <% for attribute in ref_attributes -%>
     = f.input :<%= attribute %>
