@@ -5,6 +5,7 @@
           data: {confirm: 'Are you sure you want to destroy this entity and all its children.'}
     %br
 <% for attribute in ref_attributes -%>
-    = f.input :<%= attribute %>
+    = f.input :<%= attribute.name %>, (respond_to?('<%= attribute.type %>_edit') ? send('<%= attribute.type %>_edit',
+              f.object.class.columns_hash['<%= attribute.name %>'], f.object.<%= attribute.name %>) : {})
 <% end %>
     %hr

@@ -59,7 +59,15 @@ module Haml
       end
 
       def ref_attributes
-        Kernel.const_get(@ref_name.camelize).accessible_attributes.to_a.reject {|a| a.blank? || a =~ /_attributes$/}
+        reject_attributes Kernel.const_get(@ref_name.camelize).columns
+      end
+
+      def self_attributes
+        reject_attributes Kernel.const_get(class_name).columns
+      end
+
+      def reject_attributes list
+        list.reject {|a| a.name.blank? || a.name =~ /id$|at$/}
       end
 
       def title_name

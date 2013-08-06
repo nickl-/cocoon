@@ -11,10 +11,9 @@
       .panel-heading
         %b <%= title_name %>
       = f.inputs do
-<% for attribute in attributes -%>
-<%   unless %w(references belongs_to).include? attribute.type.to_s || attribute =~ /_attributes$/ -%>
-        = f.input :<%= attribute.name %>
-<%   end -%>
+<% for attribute in self_attributes -%>
+        = f.input :<%= attribute.name %>, (respond_to?('<%= attribute.type %>_edit') ? send('<%= attribute.type %>_edit',
+                  @<%= singular_table_name %>.class.columns_hash['<%= attribute.name %>'], @<%= singular_table_name %>.<%= attribute.name %>) : {})
 <% end -%>
       %br
 <% for ref in references -%>
