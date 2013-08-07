@@ -1,10 +1,11 @@
 .row
   .col-10
-    %ul.nav.nav-pills
-      %li= link_to 'New <%= title_name %>', new_<%= singular_table_name %>_path
-      %li= link_to 'All <%= plural_title_name %>', <%= table_name %>_path
-      %li.active= link_to 'Edit this <%= title_name %>', edit_<%= singular_table_name %>_path(@<%= singular_table_name %>)
-      %li= link_to 'Show this <%= title_name %>', @<%= singular_table_name %>
+    .subnav
+      %ul.nav.nav-pills
+        %li= link_to 'New <%= title_name %>', new_<%= singular_table_name %>_path
+        %li= link_to 'All <%= plural_title_name %>', <%= table_name %>_path
+        %li.active= link_to 'Edit this <%= title_name %>', edit_<%= singular_table_name %>_path(@<%= singular_table_name %>)
+        %li= link_to 'Show this <%= title_name %>', @<%= singular_table_name %>
 
     %h1 Editing <%= title_name %>
 

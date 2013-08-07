@@ -1,28 +1,29 @@
 .row
-  .cel-lg-12
-    %ul{class: "nav nav-pills"}
-      %li= link_to 'New <%= title_name %>', new_<%= singular_table_name %>_path
-      %li{class: "active"}= link_to 'All <%= plural_title_name %>', <%= table_name %>_path
-      %li{class: "disabled"}= link_to 'Edit this <%= title_name %>', '#'
-      %li{class: "disabled"}= link_to 'Show this <%= title_name %>', '#'
+  .col-12
+    .subnav
+      %ul.nav.nav-pills
+        %li= link_to 'New <%= title_name %>', new_<%= singular_table_name %>_path
+        %li.active= link_to 'All <%= plural_title_name %>', <%= table_name %>_path
+        %li.disabled= link_to 'Edit this <%= title_name %>', '#'
+        %li.disabled= link_to 'Show this <%= title_name %>', '#'
 
-%h1 All <%= plural_title_name %>
+    %h1 All <%= plural_title_name %>
 
-%table{class: 'table table-condensed table-striped'}
-  %tr
+    %table{class: 'table table-condensed table-striped'}
+      %tr
 <% for attribute in attributes -%>
-    %th <%= attribute.human_name %>
+        %th <%= attribute.human_name %>
 <% end -%>
-    %th
+        %th
 
-  - @<%= plural_table_name %>.each do |<%= singular_table_name %>|
-    %tr
+      - @<%= plural_table_name %>.each do |<%= singular_table_name %>|
+        %tr
 <% for attribute in attributes -%>
-      %td= <%= singular_table_name %>.<%= attribute.name %>
+          %td= <%= singular_table_name %>.<%= attribute.name %>
 <% end -%>
-      %td{align: 'right'}
-        = link_to 'Show', <%= singular_table_name %>, class: 'btn btn-primary btn-mini'
-        = link_to 'Edit', edit_<%= singular_table_name %>_path(<%= singular_table_name %>), class: 'btn btn-success btn-mini'
-        = link_to 'Destroy', <%= singular_table_name %>, data: { confirm: 'Are you sure?' }, method: :delete, class: 'btn btn-danger btn-mini'
-
+          %td{align: 'right'}
+            = link_to 'Show', <%= singular_table_name %>, class: 'btn btn-primary btn-mini'
+            = link_to 'Edit', edit_<%= singular_table_name %>_path(<%= singular_table_name %>), class: 'btn btn-success btn-mini'
+            = link_to 'Destroy', <%= singular_table_name %>, data: { confirm: 'Are you sure?' }, method: :delete, class: 'btn btn-danger btn-mini'
+    = paginate @<%= plural_table_name %>
 %br

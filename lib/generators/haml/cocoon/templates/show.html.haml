@@ -1,6 +1,6 @@
 .row
   .col-10
-    .sub-nav
+    .subnav
       %ul.nav.nav-pills
         %li= link_to 'New <%= title_name %>', new_<%= singular_table_name %>_path
         %li= link_to 'All <%= plural_title_name %>', <%= table_name %>_path
@@ -30,7 +30,7 @@
 <% end -%>
 
   .col-2
-    .well#sidebar-nav
+    .well.nav.sidebar-nav
       %h3 Sidebar
       %ul.nav.nav-list
         %li= link_to "<%= title_name %> #{@<%= singular_table_name %>.id}", "#<%= singular_table_name %>_#{@<%= singular_table_name %>.id}"
