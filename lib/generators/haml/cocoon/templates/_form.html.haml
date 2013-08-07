@@ -11,9 +11,11 @@
       .panel-heading
         %b <%= title_name %>
       = f.inputs do
-<% for attribute in self_attributes -%>
-        = f.input :<%= attribute.name %>, (respond_to?('<%= attribute.type %>_edit') ? send('<%= attribute.type %>_edit',
-                  @<%= singular_table_name %>.class.columns_hash['<%= attribute.name %>'], @<%= singular_table_name %>.<%= attribute.name %>) : {})
+<% self_attributes.each do |name, attribute| -%>
+        = f.input :<%= name %>,
+          (respond_to?('<%= attribute.type %>_edit') ? send('<%= attribute.type %>_edit',
+          @<%= singular_table_name %>.<%= name %>,
+          @<%= singular_table_name %>.class.columns_hash['<%= name %>']) : {})
 <% end -%>
       %br
 <% for ref in references -%>

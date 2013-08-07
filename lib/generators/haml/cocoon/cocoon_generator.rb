@@ -59,15 +59,15 @@ module Haml
       end
 
       def ref_attributes
-        reject_attributes Kernel.const_get(@ref_name.camelize).columns
+        reject_attributes Kernel.const_get(ref_name.camelize).columns_hash
       end
 
       def self_attributes
-        reject_attributes Kernel.const_get(class_name).columns
+        @self_attributes ||= reject_attributes Kernel.const_get(class_name).columns_hash
       end
 
-      def reject_attributes list
-        list.reject {|a| a.name.blank? || a.name =~ /id$|at$/}
+      def reject_attributes hash
+        hash.reject {|name, a| name.blank? || name =~ /id$|at$/}
       end
 
       def title_name

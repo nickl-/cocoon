@@ -19,11 +19,11 @@
         .panel-heading
           %b <%= title_name %>
         %dl.dl-horizontal
-<% for attribute in attributes -%>
-          %dt <%= attribute.human_name %>
-          %dd= respond_to?("<%= attribute.type %>_view") |
-              ? <%= attribute.type %>_view(@<%= singular_table_name %>.<%= attribute.name %>) |
-              : @<%= singular_table_name %>.<%= attribute.name %> |
+<% self_attributes.each do |name, attribute| -%>
+          %dt <%= name.titleize %>
+          - value = @<%= singular_table_name %>.<%= name %>
+          %dd!= respond_to?('<%= attribute.type %>_view') ? send('<%= attribute.type %>_view', value,
+            @<%= singular_table_name %>.class.columns_hash['<%= name %>']) : (value.blank? ? '&nbsp;' : value)
 <% end -%>
 <% for ref in references -%>
         = render 'view_nests', f: @<%= singular_table_name %>.<%= ref.pluralize %>, nested: '<%= ref %>'
