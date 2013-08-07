@@ -22,8 +22,8 @@
           %td= <%= singular_table_name %>.<%= attribute.name %>
 <% end -%>
           %td{align: 'right'}
-            = link_to 'Show', <%= singular_table_name %>, class: 'btn btn-primary btn-mini'
-            = link_to 'Edit', edit_<%= singular_table_name %>_path(<%= singular_table_name %>), class: 'btn btn-success btn-mini'
-            = link_to 'Destroy', <%= singular_table_name %>, data: { confirm: 'Are you sure?' }, method: :delete, class: 'btn btn-danger btn-mini'
+            = link_to 'Show', <%= singular_table_name %>, class: 'btn btn-primary btn-xs'
+            = link_to 'Edit', edit_<%= singular_table_name %>_path(<%= singular_table_name %>), class: 'btn btn-success btn-xs'
+            = link_to 'Destroy', <%= singular_table_name %>, data: { confirm: 'Are you sure?' }, method: :delete, class: 'btn btn-danger btn-xs'
     = paginate @<%= plural_table_name %>
 %br
