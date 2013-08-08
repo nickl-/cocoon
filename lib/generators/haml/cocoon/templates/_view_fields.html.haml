@@ -1,8 +1,9 @@
-%dl{class: 'dl-horizontal'}
-  - item.class.columns_hash.each do |name, attribute|
-    - unless name[/id$|at$/]
-      %dt= name.titleize
-      - value = item.attributes[name]
-      %dd!= respond_to?("#{attribute.type}_view") |
+%section[item]
+  %dl.dl-horizontal
+    - item.class.columns_hash.each do |name, attribute|
+      - unless name[/id$|at$/]
+        %dt= name.titleize
+        - value = item.attributes[name]
+        %dd!= respond_to?("#{attribute.type}_view") |
           ? send("#{attribute.type}_view", value, attribute) |
           : (value.blank? ? '&nbsp;' : value) |
