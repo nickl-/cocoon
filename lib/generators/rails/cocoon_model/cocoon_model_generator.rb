@@ -94,10 +94,6 @@ module Rails
         end
       end
 
-      def inject_has_many(ref, model)
-        inject_into_file model, "  has_many :#{ref}, dependent: :destroy\n", :after => " < ActiveRecord::Base\n"
-      end
-
       def inject_accepts_nested_attributes_for(ref, model)
         snippet = "  accepts_nested_attributes_for :#{ref}, reject_if: :all_blank, allow_destroy: true\n"
         inject_into_file model, snippet, :after => " < ActiveRecord::Base\n"
