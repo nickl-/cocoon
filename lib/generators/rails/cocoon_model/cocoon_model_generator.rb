@@ -4,7 +4,9 @@ module Rails
   module Generators
     hide_namespace 'cocoon_model'
     class CocoonModelGenerator < ActiveRecord::Generators::ModelGenerator
-      source_root "#{base_root}/active_record/model/templates"
+      # TODO: include both paths and remove the migration.rb model.rb and
+      # TODO: madule.rb template files which will then be redundant
+      #source_root "#{base_root}/active_record/model/templates"
       source_root File.expand_path("templates", File.dirname(__FILE__))
 
       def self_association
