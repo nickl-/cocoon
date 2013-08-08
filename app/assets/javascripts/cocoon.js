@@ -5,14 +5,32 @@
   var create_new_id = function() {
     return (new Date().getTime() + cocoon_element_counter++);
   }
-  
+
   var newcontent_braced = function(id) {
     return '[' + id + ']$1';
   }
-  
+
   var newcontent_underscord = function(id) {
     return '_' + id + '_$1';
   }
+
+  function init_sections_nav() {
+    $sidebar = $('.sidebar-nav ul');
+    $sidebar.empty();
+    $('section').each(function () {
+      title = this.id.replace(/(^|_)(.)/g, function (m, p1, p2) {
+        return  (p1 ? ' ' : '') + p2.toUpperCase();
+      });
+      $sidebar.append($('<li>').append($('<a>')
+        .attr('href', '#'+this.id)
+        .text(title)));
+    });
+    $('[data-spy="scroll"]').each(function () {
+      var $spy = $(this).scrollspy('refresh');
+    });
+  }
+
+  $(document).ready(init_sections_nav);
 
   $(document).on('click', '.add_fields', function(e) {
     e.preventDefault();
@@ -30,7 +48,7 @@
         new_content           = content.replace(regexp_braced, newcontent_braced(new_id)),
         new_contents          = [];
 
-    
+
     if (new_content == content) {
       regexp_braced     = new RegExp('\\[new_' + assocs + '\\](.*?\\s)', 'g');
       regexp_underscord = new RegExp('_new_' + assocs + '_(\\w*)', 'g');
@@ -42,16 +60,16 @@
 
     count = (isNaN(count) ? 1 : Math.max(count, 1));
     count -= 1;
-    
+
     while (count) {
       new_id      = create_new_id();
       new_content = content.replace(regexp_braced, newcontent_braced(new_id));
       new_content = new_content.replace(regexp_underscord, newcontent_underscord(new_id));
       new_contents.push(new_content);
-      
+
       count -= 1;
     }
-    
+
     if (insertionNode){
       if (insertionTraversal){
         insertionNode = $this[insertionTraversal](insertionNode);
