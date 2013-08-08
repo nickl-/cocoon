@@ -5,6 +5,7 @@ module Rails
     hide_namespace 'cocoon_model'
     class CocoonModelGenerator < ActiveRecord::Generators::ModelGenerator
       source_root "#{base_root}/active_record/model/templates"
+      source_root File.expand_path("templates", File.dirname(__FILE__))
 
       def self_association
         say_status :invoke, 'self_association', :white
@@ -26,7 +27,38 @@ module Rails
         end
       end
 
+      def create_serializer
+        template 'nested_serializer.rb', File.join('app/serializers', "#{name.underscore}_serializer.rb")
+      end
+
+      def self_serialization
+        say_status :invoke, 'self_serialization', :white
+        Dir.glob('app/models/*') { |file|
+          File.read(file).lines { |line|
+            if line =~ /belongs_to :#{name.underscore}/
+              unless File.exist?(model = File.join('app/serializers', "#{name.underscore}_serializer.rb"))
+                create_serializer
+              end
+              inject_serialization file[/\w*(?=\.)/].tableize, name.underscore
+            end
+          }
+        }
+      end
+
+      def parent_serialization
+        say_status :invoke, 'parent_serialization', :white
+        attributes.each do |att|
+          if %w(belongs_to references).include? att.type.to_s
+            inject_serialization name.tableize, att.name.underscore
+          end
+        end
+      end
+
       protected
+
+      def attributes_names
+        [:id] + attributes.select { |attr| !attr.reference? }.map { |a| a.name.to_sym }
+      end
 
       def inject_associate(ref, model)
         if File.exist?(model = File.join('app/models', "#{model}.rb"))
@@ -35,6 +67,22 @@ module Rails
             inject_has_many ref, model
           end
           inject_attr_accessible ref, model
+        end
+      end
+
+      def inject_serialization(ref, model)
+        if File.exist?(model = File.join('app/serializers', "#{model}_serializer.rb"))
+          unless File.read(model) =~ /has_many :#{ref}/
+            inject_has_many ref, model, true
+          else
+            say_status :identical, model, :blue
+          end
+        end
+      end
+
+      def inject_has_many(ref, model, only=false)
+        inject_into_class model, model[/\w*(?=\.)/].camelize do
+          "  has_many :#{ref}" + (only ? "\n" : ", dependent: :destroy\n")
         end
       end
 
