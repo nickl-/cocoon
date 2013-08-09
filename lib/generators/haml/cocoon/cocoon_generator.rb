@@ -2,6 +2,20 @@ require 'generators/haml/scaffold/scaffold_generator'
 
 module Haml
   module Generators
+    class RefName
+      attr_accessor :name, :relationship
+      def initialize(n, r='')
+        self.relationship= r
+        self.name= n.singularize unless self.has_one?
+        self.name= n if self.has_one?
+      end
+      def has_one?
+        not (self.relationship =~ /has_one/).nil?
+      end
+      def has_many?
+        not (self.relationship =~ /has_many/).nil?
+      end
+    end
     class CocoonGenerator < Haml::Generators::ScaffoldGenerator
       source_root File.expand_path("../templates", __FILE__)
 
@@ -13,15 +27,15 @@ module Haml
       end
 
       def references
-        @references ||= recurse singular_table_name
+        @references ||= recurse RefName.new(singular_table_name)
       end
 
       def recurse ref
         references = []
         @_source_root ||= File.expand_path("../templates", __FILE__)
-        File.read("app/models/#{ref}.rb").lines do |line|
-          if line =~ /has_many/
-            @ref_name = line[/:(\w*)/,1].underscore.singularize
+        File.read("app/models/#{ref.name}.rb").lines do |line|
+          if line =~ /has_many :|has_one :/
+            @ref_name = RefName.new(*line[/has\w* :\w*/].split(' :').reverse)
             src = "_view_%ref_name%_fields.html.haml"
             dst = convert_encoded_instructions(
                 "app/views/#{table_name}/_view_%ref_name%_fields.html.haml"
@@ -29,7 +43,7 @@ module Haml
             copy_file src, dst
             template src.gsub(/_view/, ''), dst.gsub(/_view/, '')
             references.append @ref_name.dup
-            append_nested @ref_name.dup, recurse(@ref_name.dup)
+            append_nested @ref_name.name.dup, recurse(@ref_name.dup)
           end
         end
         references
@@ -55,7 +69,7 @@ module Haml
       end
 
       def ref_name
-        @ref_name
+        @ref_name.name
       end
 
       def ref_attributes

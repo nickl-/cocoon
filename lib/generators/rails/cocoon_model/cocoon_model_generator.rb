@@ -3,88 +3,125 @@ require 'rails/generators/active_record/model/model_generator'
 module Rails
   module Generators
     hide_namespace 'cocoon_model'
+
+    class GeneratedAttribute
+      alias _initialize initialize
+      def initialize(name, type=nil, index_type=false, attr_options={})
+        _initialize(name, type, index_type, attr_options)
+        relationship index_type
+      end
+
+      def relationship rel=nil
+        @relationship = rel if %w(has_many has_one).include?(rel)
+        @relationship ||= default_relationship
+      end
+
+      def has_many?
+        %w(has_many).include?(relationship)
+      end
+
+      def has_one?
+        %w(has_one).include?(relationship)
+      end
+
+      def default_relationship
+        'has_many' if reference?
+      end
+    end
+
     class CocoonModelGenerator < ActiveRecord::Generators::ModelGenerator
       # TODO: include both paths and remove the migration.rb model.rb and
       # TODO: madule.rb template files which will then be redundant
       #source_root "#{base_root}/active_record/model/templates"
       source_root File.expand_path("templates", File.dirname(__FILE__))
 
+      def initialize(args, *options)
+        @model_file = {}
+        @serializer_file = {}
+        @is_file = {}
+        super args, *options
+      end
+
       def self_association
         say_status :invoke, 'self_association', :white
-        Dir.glob('app/models/*') { |file|
-          File.read(file).lines { |line|
-            if line =~ /belongs_to :#{name.underscore}/
-              inject_associate file[/\w*(?=\.)/].tableize, name.underscore
-            end
-          }
-        }
+        create_serializer singular_name
+        Dir.glob('app/models/*') do |file|
+          assoc = ''
+          if in_file? "belongs_to :#{singular_name}", file, assoc
+            ref = file[/\w*(?=\.)/]
+            assoc = assoc[/# #{singular_name}:-*(\w*)-*.:#{ref}/, 1]
+            inject_associate(assoc, ref, singular_name) &&
+              inject_serialization(assoc, ref, singular_name)
+          end
+        end
       end
 
       def parent_association
         say_status :invoke, 'parent_association', :white
         attributes.each do |att|
-          if %w(belongs_to references).include? att.type.to_s
-            inject_associate name.tableize, att.name.underscore
-          end
-        end
-      end
-
-      def create_serializer
-        template 'nested_serializer.rb', File.join('app/serializers', "#{name.underscore}_serializer.rb")
-      end
-
-      def self_serialization
-        say_status :invoke, 'self_serialization', :white
-        Dir.glob('app/models/*') { |file|
-          File.read(file).lines { |line|
-            if line =~ /belongs_to :#{name.underscore}/
-              unless File.exist?(model = File.join('app/serializers', "#{name.underscore}_serializer.rb"))
-                create_serializer
-              end
-              inject_serialization file[/\w*(?=\.)/].tableize, name.underscore
-            end
-          }
-        }
-      end
-
-      def parent_serialization
-        say_status :invoke, 'parent_serialization', :white
-        attributes.each do |att|
-          if %w(belongs_to references).include? att.type.to_s
-            inject_serialization name.tableize, att.name.underscore
+          if att.reference?
+            inject_relationship att.relationship, singular_name, att.name
+            inject_associate att.relationship, singular_name, att.name
+            inject_serialization att.relationship, singular_name, att.name if
+                is_file? serializer_file att.name
           end
         end
       end
 
       protected
 
+      def create_serializer model
+        template 'nested_serializer.rb', serializer_file(model)
+      end
+
       def attributes_names
         [:id] + attributes.select { |attr| !attr.reference? }.map { |a| a.name.to_sym }
       end
 
-      def inject_associate(ref, model)
-        if File.exist?(model = File.join('app/models', "#{model}.rb"))
-          unless File.read(model) =~ /has_many :#{ref}/
-            inject_accepts_nested_attributes_for ref, model
-            inject_has_many ref, model
-          end
-          inject_attr_accessible ref, model
-        end
+      def inject_relationship(assoc, ref, model)
+        assoc, ref = assoc_ref(assoc, ref).split(' :')
+        inject_file "# #{model}:---#{assoc}--<:#{ref}", model_file(ref.singularize), true
       end
 
-      def inject_serialization(ref, model)
-        if File.exist?(model = File.join('app/serializers', "#{model}_serializer.rb"))
-          unless File.read(model) =~ /has_many :#{ref}/
-            inject_has_many ref, model, true
-          else
-            say_status :identical, model, :blue
-          end
-        end
+      def inject_associate(assoc, ref, model)
+        inject_accepts_nested_attributes_for( (assoc[/one/] ? ref : ref.pluralize), model_file(model))
+        inject_file(assoc_ref(assoc, ref), model_file(model))
+        inject_attr_accessible(ref, model_file(model))
       end
 
-      def inject_has_many(ref, model, only=false)
-        inject_into_class model, model[/\w*(?=\.)/].camelize do
-          "  has_many :#{ref}" + (only ? "\n" : ", dependent: :destroy\n")
+      def inject_serialization(assoc, ref, model)
+        create_serializer model unless is_file? serializer_file model
+        inject_file( assoc_ref(assoc, ref), serializer_file(model), true)
+      end
+
+      def assoc_ref assoc, ref
+        ref[/.*/] = ref.pluralize unless assoc =~ /one/
+        "#{assoc} :#{ref}"
+      end
+
+      def model_file model
+        @model_file[model.parameterize] ||= File.join('app/models', "#{model}.rb")
+      end
+
+      def serializer_file model
+        @serializer_file[model.parameterize] ||= File.join('app/serializers', "#{model}_serializer.rb")
+      end
+
+      def is_file? file
+        @is_file[file.parameterize] ||= File.exists? file
+      end
+
+      def in_file?(needle, file, contents='')
+        return (contents[/.*/] = File.read(file)) =~ /#{needle}/ if is_file? file
+        true
+      end
+
+      def inject_file(ref, model, only=false)
+        unless in_file? ref, model
+          inject_into_class model, model[/\w*(?=\.)/].camelize do
+            "  #{ref}" + (only ? "\n" : ", dependent: :destroy\n")
+          end
+          true
         end
       end
 
@@ -92,11 +129,12 @@ module Rails
         gsub_file "#{model}", /attr_accessible .*/ do  |m|
           m << ", :#{ref}_attributes" unless m.to_s =~ /#{ref}_attributes/
         end
+        true
       end
 
       def inject_accepts_nested_attributes_for(ref, model)
-        snippet = "  accepts_nested_attributes_for :#{ref}, reject_if: :all_blank, allow_destroy: true\n"
-        inject_into_file model, snippet, :after => " < ActiveRecord::Base\n"
+        inject_file "accepts_nested_attributes_for :#{ref}, reject_if: :all_blank, allow_destroy: true",
+            model, true
       end
 
     end

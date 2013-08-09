@@ -26,7 +26,7 @@
             @<%= singular_table_name %>.class.columns_hash['<%= name %>']) : (value.blank? ? '&nbsp;' : value)
 <% end -%>
 <% for ref in references -%>
-        = render 'view_nests', f: @<%= singular_table_name %>.<%= ref.pluralize %>, nested: '<%= ref %>'
+        = render 'view_nests', f: @<%= singular_table_name %>.<%= ref.has_many? ? ref.name.pluralize : ref.name %>, nested: '<%= ref.name %>', has_one: <%= ref.has_one?.to_s %>
 <% end -%>
 
   .col-2

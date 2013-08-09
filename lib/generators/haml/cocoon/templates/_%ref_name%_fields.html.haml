@@ -5,9 +5,7 @@
       data: {confirm: 'Are you sure you want to destroy this entity and all its children.'}
     %br
 <% ref_attributes.each do |name, attribute| -%>
-    = f.input :<%= name %>,
-      (respond_to?('<%= attribute.type %>_edit') ? send('<%= attribute.type %>_edit',
-      f.object.<%= name %>,
-      f.object.class.columns_hash['<%= name %>']) : {})
+    = f.input :<%= name %>, (respond_to?('<%= attribute.type %>_edit') ? send('<%= attribute.type %>_edit',
+        f.object.<%= name %>, f.object.class.columns_hash['<%= name %>']) : {})
 <% end -%>
     %hr

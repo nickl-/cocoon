@@ -12,14 +12,12 @@
         %b <%= title_name %>
       = f.inputs do
 <% self_attributes.each do |name, attribute| -%>
-        = f.input :<%= name %>,
-          (respond_to?('<%= attribute.type %>_edit') ? send('<%= attribute.type %>_edit',
-          @<%= singular_table_name %>.<%= name %>,
-          @<%= singular_table_name %>.class.columns_hash['<%= name %>']) : {})
+        = f.input :<%= name %>, (respond_to?('<%= attribute.type %>_edit') ? send('<%= attribute.type %>_edit',
+            @<%= singular_table_name %>.<%= name %>, @<%= singular_table_name %>.class.columns_hash['<%= name %>']) : {})
 <% end -%>
       %br
 <% for ref in references -%>
-      = render 'nests', f: f, nested: '<%= ref %>'
+      = render 'nests', f: f, nested: '<%= ref.name %>', has_one: <%= ref.has_one?.to_s %>
 <% end -%>
 
       .panel-footer
