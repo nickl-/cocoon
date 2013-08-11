@@ -1,8 +1,13 @@
+require 'rails/generators'
+require 'rails/generators/generated_attribute'
+require 'rails/generators/schema_attributes'
 require 'rails/generators/active_record/model/model_generator'
+require 'active_record/base'
 
 module Rails
   module Generators
     hide_namespace 'cocoon_model'
+
 
     class GeneratedAttribute
       alias _initialize initialize
@@ -12,8 +17,20 @@ module Rails
       end
 
       def relationship rel=nil
-        @relationship = rel if %w(has_many has_one).include?(rel)
+        @relationship = rel.to_sym if %w(has_many has_one).include?(rel)
         @relationship ||= default_relationship
+      end
+
+      def default_relationship
+        :has_many if reference?
+      end
+
+      def references?
+        %w(references).include?(type)
+      end
+
+      def belongs_to?
+        %w(belongs_to).include?(type)
       end
 
       def has_many?
@@ -22,10 +39,6 @@ module Rails
 
       def has_one?
         %w(has_one).include?(relationship)
-      end
-
-      def default_relationship
-        'has_many' if reference?
       end
     end
 
@@ -40,31 +53,31 @@ module Rails
         @serializer_file = {}
         @is_file = {}
         super args, *options
+        @schema_attributes = SchemaAttributes.populate(singular_name, attributes)
       end
 
       def self_association
         say_status :invoke, 'self_association', :white
         create_serializer singular_name
-        Dir.glob('app/models/*') do |file|
-          assoc = ''
-          if in_file? "belongs_to :#{singular_name}", file, assoc
-            ref = file[/\w*(?=\.)/]
-            assoc = assoc[/# #{singular_name}:-*(\w*)-*.:#{ref}/, 1]
-            inject_associate(assoc, ref, singular_name) &&
-              inject_serialization(assoc, ref, singular_name)
+        Dir.glob('app/models/*.rb') do |file|
+          ref_name = file[/\w*(?=\.)/]
+          ref = SchemaAttributes.parse(ref_name)
+          if ref.belongs_to? singular_name
+            assoc = ref.relationship singular_name
+            inject_associate(assoc, ref_name, singular_name) &&
+                inject_serialization(assoc, ref_name, singular_name)
           end
         end
       end
 
       def parent_association
         say_status :invoke, 'parent_association', :white
-        attributes.each do |att|
-          if att.reference?
-            inject_relationship att.relationship, singular_name, att.name
-            inject_associate att.relationship, singular_name, att.name
-            inject_serialization att.relationship, singular_name, att.name if
-                is_file? serializer_file att.name
-          end
+        @schema_attributes.references.each do |att|
+          assoc = att.relationship
+          inject_relationship assoc, singular_name, att.name
+          inject_associate assoc, singular_name, att.name
+          inject_serialization assoc, singular_name, att.name if
+              is_file? serializer_file att.name
         end
       end
 

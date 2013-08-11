@@ -10,6 +10,11 @@ module Rails
       def appliaction_responder
         copy_file 'application_responder.rb', 'lib/application_responder.rb'
       end
+
+      protected
+      def permissible_attributes
+        SchemaAttributes.parse(singular_name).permissible_attributes
+      end
     end
 
   end

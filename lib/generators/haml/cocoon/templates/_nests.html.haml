@@ -1,13 +1,13 @@
-.nested-group{id: nested.pluralize.dasherize}
+.nested-group{id: nested.dasherize}
   .panel
     .panel-heading
     - if has_one
       %b= nested.titleize
-      = f.semantic_fields_for nested.to_sym do |item|
+      = f.simple_fields_for nested.to_sym do |item|
         = render "#{nested}_fields", f: item
     - else
       %b= nested.pluralize.titleize
-      = f.semantic_fields_for nested.pluralize.to_sym do |item|
+      = f.simple_fields_for nested.pluralize.to_sym do |item|
         = render "#{nested}_fields", f: item
     .panel-footer
       = link_to_add_association "Add #{nested.titleize}", f,

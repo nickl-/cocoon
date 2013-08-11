@@ -2,52 +2,38 @@ require 'generators/haml/scaffold/scaffold_generator'
 
 module Haml
   module Generators
-    class RefName
-      attr_accessor :name, :relationship
-      def initialize(n, r='')
-        self.relationship= r
-        self.name= n.singularize unless self.has_one?
-        self.name= n if self.has_one?
-      end
-      def has_one?
-        not (self.relationship =~ /has_one/).nil?
-      end
-      def has_many?
-        not (self.relationship =~ /has_many/).nil?
-      end
-    end
+
     class CocoonGenerator < Haml::Generators::ScaffoldGenerator
       source_root File.expand_path("../templates", __FILE__)
+      def process_templates
+        recurse singular_name
+      end
 
       protected
 
-      def available_views
-        references
-        %w(index edit new _view_nests _view_fields _nests show)
-      end
-
-      def references
-        @references ||= recurse RefName.new(singular_table_name)
-      end
-
       def recurse ref
-        references = []
-        @_source_root ||= File.expand_path("../templates", __FILE__)
-        File.read("app/models/#{ref.name}.rb").lines do |line|
-          if line =~ /has_many :|has_one :/
-            @ref_name = RefName.new(*line[/has\w* :\w*/].split(' :').reverse)
+        SchemaAttributes.parse(ref).references.each do |ref|
+          if ref.references?
+            @ref_name = ref
             src = "_view_%ref_name%_fields.html.haml"
             dst = convert_encoded_instructions(
                 "app/views/#{table_name}/_view_%ref_name%_fields.html.haml"
             )
             copy_file src, dst
             template src.gsub(/_view/, ''), dst.gsub(/_view/, '')
-            references.append @ref_name.dup
-            append_nested @ref_name.name.dup, recurse(@ref_name.dup)
+            append_nested @ref_name.name.dup, recurse(@ref_name.name)
           end
         end
-        references
       end
+
+      def available_views
+        %w(index edit new _view_nests _view_fields _nests show)
+      end
+
+      def references
+        SchemaAttributes.parse(singular_name).references
+      end
+
 
       def convert_encoded_instructions(filename)
         filename.gsub(/%(.*?)%/) do |initial_string|
@@ -73,15 +59,11 @@ module Haml
       end
 
       def ref_attributes
-        reject_attributes Kernel.const_get(ref_name.camelize).columns_hash
+        SchemaAttributes.parse(@ref_name.name).permissible_attributes
       end
 
       def self_attributes
-        @self_attributes ||= reject_attributes Kernel.const_get(class_name).columns_hash
-      end
-
-      def reject_attributes hash
-        hash.reject {|name, a| name.blank? || name =~ /id$|at$/}
+        SchemaAttributes.parse(singular_name).permissible_attributes
       end
 
       def title_name

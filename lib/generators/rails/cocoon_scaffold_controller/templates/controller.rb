@@ -18,4 +18,8 @@ class <%= controller_class_name %>Controller < InheritedResources::Base
     @<%= plural_table_name %> ||= end_of_association_chain.page(params[:page]).per(15)
   end
 
+  def build_resource_params
+    [params.require(:<%= singular_name %>).permit(<%= permissible_attributes %>)]
+  end
+
 end

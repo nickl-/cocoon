@@ -1,19 +1,14 @@
-= semantic_form_for @<%= singular_table_name %>, html: {class: 'form-horizontal'} do |f|
+= simple_form_for @<%= singular_table_name %>, defaults: { input_html: { class: 'form-horizontal' } } do |f|
 
-  -if @<%= singular_table_name %>.errors.any?
-    - @<%= singular_table_name %>.errors.full_messages.each do |msg|
-      .alert.alert-danger
-        %button.close{title: 'Close this notification', data: {dismiss: 'alert'}} ✖
-        = msg
+  = f.error_notification
 
   %section[@<%= singular_table_name %>]
     .panel
       .panel-heading
         %b <%= title_name %>
-      = f.inputs do
 <% self_attributes.each do |name, attribute| -%>
-        = f.input :<%= name %>, (respond_to?('<%= attribute.type %>_edit') ? send('<%= attribute.type %>_edit',
-            @<%= singular_table_name %>.<%= name %>, @<%= singular_table_name %>.class.columns_hash['<%= name %>']) : {})
+      = f.input :<%= name %>, (respond_to?('<%= attribute.type %>_edit') ? send('<%= attribute.type %>_edit',
+          @<%= singular_table_name %>.<%= name %>, @<%= singular_table_name %>.class.columns_hash['<%= name %>']) : {})
 <% end -%>
       %br
 <% for ref in references -%>
@@ -23,7 +18,5 @@
       .panel-footer
         .col-3 &nbsp;
         .col-offset-3
-          = f.actions do
-            = f.action :submit, as: :input, button_html: {class: 'btn btn-primary btn-large'}
-            = f.action :reset, as: :input, button_html: {class: 'btn btn-inverse btn-large',
-                       :disable_with => 'Please wait ...'}
+          .actions
+            = f.button :submit
