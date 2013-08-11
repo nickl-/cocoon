@@ -1,5 +1,4 @@
-require 'rails/generators'
-require 'rails/generators/generated_attribute'
+require 'generators/rails/cocoon_model/cocoon_model_generator'
 module Rails
   module Generators
     class SchemaAttributes < Hash
@@ -65,7 +64,7 @@ module Rails
       end
       def merge!(*several_variants)
         super *several_variants
-        (@@cached_atts ||= {})[name] = self unless name.blank?
+        (@@cached_atts ||= {})[model] = self unless model.blank?
         self
       end
 
@@ -82,11 +81,11 @@ module Rails
       end
 
       def references
-        select {|att| att.reference?}
+        select {|name, att| att.reference?}
       end
 
       def accessible
-        reject {|att| %w(updatet_at updated_by).include? att}
+        reject {|name, att| %w(updatet_at updated_by).include? att}
       end
 
       def permissible_attributes

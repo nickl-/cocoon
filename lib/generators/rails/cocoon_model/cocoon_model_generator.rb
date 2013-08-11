@@ -53,7 +53,10 @@ module Rails
         @serializer_file = {}
         @is_file = {}
         super args, *options
-        @schema_attributes = SchemaAttributes.populate(singular_name, attributes)
+        attr = {}
+        attributes.each
+        @schema_attributes = SchemaAttributes.populate(singular_name,
+          Hash[attributes.map {|a| [a.name, a]}])
       end
 
       def self_association
