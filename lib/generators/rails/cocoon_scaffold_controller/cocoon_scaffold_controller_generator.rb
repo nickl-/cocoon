@@ -13,7 +13,7 @@ module Rails
 
       protected
       def permissible_attributes
-        SchemaAttributes.parse(singular_name).permissible_attributes
+        SchemaAttributes.parse(singular_name).permissible
       end
     end
 

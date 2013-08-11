@@ -1,3 +1,4 @@
+require 'generators/rails/cocoon_model/cocoon_model_generator'
 require 'generators/haml/scaffold/scaffold_generator'
 
 module Haml
@@ -12,7 +13,7 @@ module Haml
       protected
 
       def recurse ref
-        SchemaAttributes.parse(ref).references.each do |ref|
+        Rails::Generators::SchemaAttributes.parse(ref).references.each do |name, ref|
           if ref.references?
             @ref_name = ref
             src = "_view_%ref_name%_fields.html.haml"
@@ -31,7 +32,7 @@ module Haml
       end
 
       def references
-        SchemaAttributes.parse(singular_name).references
+        Rails::Generators::SchemaAttributes.parse(singular_name).references.values
       end
 
 
@@ -59,11 +60,11 @@ module Haml
       end
 
       def ref_attributes
-        SchemaAttributes.parse(@ref_name.name).permissible_attributes
+        Rails::Generators::SchemaAttributes.parse(@ref_name.name).accessible.values
       end
 
       def self_attributes
-        SchemaAttributes.parse(singular_name).permissible_attributes
+        Rails::Generators::SchemaAttributes.parse(singular_name).accessible.values
       end
 
       def title_name

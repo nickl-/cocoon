@@ -85,12 +85,12 @@ module Rails
       end
 
       def accessible
-        reject {|name, att| %w(updatet_at updated_by).include? att}
+        reject {|name, att| %w(created_at updated_at).include? name}
       end
 
-      def permissible_attributes
+      def permissible
         names = ''
-        accessible.names.each { |name| names << ":#{name}, " }
+        accessible.keys.reject(&:blank?).each { |name| names << ":#{name}, " }
         names.chomp(', ')
       end
     end

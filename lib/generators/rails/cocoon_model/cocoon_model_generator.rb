@@ -75,12 +75,12 @@ module Rails
 
       def parent_association
         say_status :invoke, 'parent_association', :white
-        @schema_attributes.references.each do |att|
+        @schema_attributes.references.each do |name, att|
           assoc = att.relationship
-          inject_relationship assoc, singular_name, att.name
-          inject_associate assoc, singular_name, att.name
-          inject_serialization assoc, singular_name, att.name if
-              is_file? serializer_file att.name
+          inject_relationship assoc, singular_name, name
+          inject_associate assoc, singular_name, name
+          inject_serialization assoc, singular_name, name if
+              is_file? serializer_file name
         end
       end
 
