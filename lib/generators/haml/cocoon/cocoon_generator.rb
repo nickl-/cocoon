@@ -1,38 +1,37 @@
 require 'generators/rails/cocoon_model/cocoon_model_generator'
 require 'generators/haml/scaffold/scaffold_generator'
+require 'schema_attributes'
 
 module Haml
   module Generators
 
     class CocoonGenerator < Haml::Generators::ScaffoldGenerator
       source_root File.expand_path("../templates", __FILE__)
-      def process_templates
-        recurse singular_name
-      end
 
       protected
 
       def recurse ref
-        Rails::Generators::SchemaAttributes.parse(ref).references.each do |name, ref|
-          if ref.references?
-            @ref_name = ref
+        SchemaAttributes.parse(ref).references.each do |name, ref|
+          if ref.type == :references
+            @ref_name = name
             src = "_view_%ref_name%_fields.html.haml"
             dst = convert_encoded_instructions(
                 "app/views/#{table_name}/_view_%ref_name%_fields.html.haml"
             )
             copy_file src, dst
             template src.gsub(/_view/, ''), dst.gsub(/_view/, '')
-            append_nested @ref_name.name.dup, recurse(@ref_name.name)
+            append_nested ref_name, recurse(ref_name)
           end
         end
       end
 
       def available_views
+        recurse singular_name if ref_name.blank?
         %w(index edit new _view_nests _view_fields _nests show)
       end
 
       def references
-        Rails::Generators::SchemaAttributes.parse(singular_name).references.values
+        SchemaAttributes.parse(singular_name).references.values
       end
 
 
@@ -56,15 +55,15 @@ module Haml
       end
 
       def ref_name
-        @ref_name.name
+        @ref_name
       end
 
       def ref_attributes
-        Rails::Generators::SchemaAttributes.parse(@ref_name.name).accessible.values
+        SchemaAttributes.parse(ref_name).accessible
       end
 
       def self_attributes
-        Rails::Generators::SchemaAttributes.parse(singular_name).accessible.values
+        SchemaAttributes.parse(singular_name).accessible
       end
 
       def title_name

@@ -1,6 +1,6 @@
 require 'rails/generators'
 require 'rails/generators/generated_attribute'
-require 'rails/generators/schema_attributes'
+require 'schema_attributes'
 require 'rails/generators/active_record/model/model_generator'
 require 'active_record/base'
 
@@ -31,6 +31,27 @@ module Rails
 
       def belongs_to?
         %w(belongs_to).include?(type)
+      end
+
+      def titleize
+        name.titleize
+      end
+
+      def title_single
+        singular_name.titleize
+      end
+
+      def title_plural
+        plural_name.titleize
+      end
+
+      def singular_name
+        return name unless has_many?
+        name.singleize
+      end
+
+      def plural_name
+        name.pluralize
       end
 
       def has_many?
@@ -69,18 +90,22 @@ module Rails
             assoc = ref.relationship singular_name
             inject_associate(assoc, ref_name, singular_name) &&
                 inject_serialization(assoc, ref_name, singular_name)
+            assoc_ref assoc, ref_name
+            rref = ref[singular_name].dup
+            rref.name, rref.type = ref_name, :references
+            @schema_attributes.merge!({"#{ref_name}" => rref})
           end
         end
       end
 
       def parent_association
         say_status :invoke, 'parent_association', :white
-        @schema_attributes.references.each do |name, att|
+        @schema_attributes.belongs_to.each do |name, att|
           assoc = att.relationship
-          inject_relationship assoc, singular_name, name
-          inject_associate assoc, singular_name, name
-          inject_serialization assoc, singular_name, name if
-              is_file? serializer_file name
+          inject_relationship assoc, singular_name, att.singular_name
+          inject_associate assoc, singular_name, att.singular_name
+          inject_serialization assoc, singular_name, att.singular_name if
+              is_file? serializer_file att.singular_name
         end
       end
 

@@ -1,6 +1,7 @@
 module Rails
   module Generators
     require 'rails/generators/rails/scaffold_controller/scaffold_controller_generator'
+    require 'schema_attributes'
 
     class CocoonScaffoldControllerGenerator < Rails::Generators::ScaffoldControllerGenerator
       source_root File.expand_path("../templates", __FILE__)
