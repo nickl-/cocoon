@@ -12,7 +12,7 @@
 <% end -%>
       %br
 <% for ref in references -%>
-      = render 'nests', f: f, nested: '<%= ref.name %>', has_one: <%= ref.has_one?.to_s %>
+      = render 'nests', f: f, nested: '<%= ref.name %>', has_one: <%= (ref.type == :has_one) %>
 <% end -%>
 
       .panel-footer

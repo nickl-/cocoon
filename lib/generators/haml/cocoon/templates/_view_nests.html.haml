@@ -2,11 +2,13 @@
   - unless f.blank?
     .panel
       .panel-heading
+        - if has_one
+          %b= nested.titleize
+        - else
+          %b= nested.pluralize.titleize
       - if has_one
-        %b= nested.titleize
         = render "view_#{nested}_fields", item: f
       - else
-        %b= nested.pluralize.titleize
         - f.each do |item|
           = render "view_#{nested}_fields", item: item
         %hr

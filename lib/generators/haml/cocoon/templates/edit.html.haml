@@ -12,7 +12,7 @@
     = render 'form'
 
   .col-2
-    .well.nav.sidebar-nav
+    #sidebar-form-sections.well.nav.sidebar-nav
       %h3 Sidebar
       %ul.nav.nav-list
         %li= link_to "<%= title_name %> #{@<%= singular_table_name %>.id}", "#<%= singular_table_name %>_#{@<%= singular_table_name %>.id}"

@@ -127,7 +127,7 @@ module Rails
       def inject_associate(assoc, ref, model)
         inject_accepts_nested_attributes_for( (assoc[/one/] ? ref : ref.pluralize), model_file(model))
         inject_file(assoc_ref(assoc, ref), model_file(model))
-        inject_attr_accessible(ref, model_file(model))
+        inject_attr_accessible(ref, model)
       end
 
       def inject_serialization(assoc, ref, model)

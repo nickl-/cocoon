@@ -1,12 +1,14 @@
 .nested-group{id: nested.dasherize}
   .panel
     .panel-heading
+      - if has_one
+        %b= nested.titleize
+      - else
+        %b= nested.pluralize.titleize
     - if has_one
-      %b= nested.titleize
       = f.simple_fields_for nested.to_sym do |item|
         = render "#{nested}_fields", f: item
     - else
-      %b= nested.pluralize.titleize
       = f.simple_fields_for nested.pluralize.to_sym do |item|
         = render "#{nested}_fields", f: item
     .panel-footer
