@@ -167,8 +167,11 @@ module Rails
       end
 
       def inject_attr_accessible(ref, model)
-        gsub_file "#{model}", /attr_accessible .*/ do  |m|
-          m << ", :#{ref}_attributes" unless m.to_s =~ /#{ref}_attributes/
+        inject_into_file "app/controllers/#{plural_name}_controller.rb", after: "#{model}_attributes" do  |m|
+m << <<eod
+          #{ref}_attributes: [#{SchemaAttributes.parse(ref).permissible}
+        ],
+eod
         end
         true
       end

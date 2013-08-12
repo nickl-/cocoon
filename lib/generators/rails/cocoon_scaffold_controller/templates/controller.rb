@@ -19,7 +19,12 @@ class <%= controller_class_name %>Controller < InheritedResources::Base
   end
 
   def build_resource_params
-    [params.require(:<%= singular_name %>).permit(<%= permissible_attributes %>)]
+    [params.require(:<%= singular_name %>).permit(
+        # Main entity privileges
+         [<%= permissible_attributes %>,
+        # <%= singular_name %>_attributes of associated privileges
+         ]
+     )]
   end
 
 end
