@@ -13,6 +13,23 @@ module Rails
       end
 
       protected
+      def strong_parameters
+        say_status :insert, 'injecting strong parameters', :blue
+        recurse_references singular_name, '  '
+      end
+
+      def recurse_references(model, indent)
+        ret = ''
+        SchemaAttributes.parse(model).references.each do |name, att|
+          ret << ",\n      #{indent}#{att.name}_attributes: ["
+          ret << ":_destroy, :id, "
+          ret << SchemaAttributes.parse(name).permissible
+          ret << recurse_references(name, indent+indent)
+          ret << ']'
+        end
+        ret
+      end
+
       def permissible_attributes
         #":#{SchemaAttributes.parse('person').belongs_to.values.map(&:name)*', :'}, " <<
           SchemaAttributes.parse(singular_name).permissible

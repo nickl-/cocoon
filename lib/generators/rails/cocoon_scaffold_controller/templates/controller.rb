@@ -20,11 +20,8 @@ class <%= controller_class_name %>Controller < InheritedResources::Base
 
   def build_resource_params
     [params.require(:<%= singular_name %>).permit(
-        # Main entity privileges
-         [<%= permissible_attributes %>,
-        # <%= singular_name %>_attributes of associated privileges
-         ]
-     )]
+      [<%= permissible_attributes %><%= strong_parameters %>]
+    )] if params[:<%= singular_name %>].present?
   end
 
 end
