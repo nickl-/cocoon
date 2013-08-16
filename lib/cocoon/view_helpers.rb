@@ -55,6 +55,23 @@ module Cocoon
       end
     end
 
+    def render_add_association(*args)
+      f            = args[0]
+      association  = args[1]
+      html_options = args[2] || {}
+
+      render_options   = html_options.delete(:render_options)
+      render_options ||= {}
+      override_partial = html_options.delete(:partial)
+      wrap_object = html_options.delete(:wrap_object)
+      force_non_association_create = html_options.delete(:force_non_association_create) || false
+
+      new_object = create_object(f, association, false)
+      new_object = wrap_object.call(new_object) if wrap_object.respond_to?(:call)
+
+      render_association(association, f, new_object, render_options, override_partial).html_safe
+    end
+
     # shows a link that will allow to dynamically add a new associated object.
     #
     # - *name* :         the text to show in the link
