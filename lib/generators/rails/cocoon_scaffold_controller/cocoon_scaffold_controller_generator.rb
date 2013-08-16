@@ -14,9 +14,10 @@ module Rails
 
       protected
       def permissible_attributes
-        SchemaAttributes.parse(singular_name).permissible
+        #":#{SchemaAttributes.parse('person').belongs_to.values.map(&:name)*', :'}, " <<
+          SchemaAttributes.parse(singular_name).permissible
       end
-    end
 
+    end
   end
 end

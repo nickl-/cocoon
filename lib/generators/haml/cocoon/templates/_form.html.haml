@@ -1,22 +1,26 @@
-= simple_form_for @<%= singular_table_name %>, wrapper: 'inline',  defaults: { input_html: { class: 'form-horizontal' } } do |f|
+= simple_form_for(@<%= singular_table_name %>, :html => { :class => 'form-horizontal' }) do |f|
 
   = f.error_notification
 
   %section[@<%= singular_table_name %>]
     .panel
       .panel-heading
-        %b <%= title_name %>
+        %b= t '.<%= title_name %>'
+<% belongs_to.each do |name, ref|-%>
+      = f.association :<%= ref.name %>, (respond_to?('select_edit') ? send('select_edit',
+          @<%= name %>.<%= ref.name %>, {has_one: <%= ref.has_one? %>, column: @<%= name %>.class.columns_hash['<%= ref.name %>']}) : {})
+<% end %>
 <% self_attributes.each do |name, attribute| -%>
-      = f.input :<%= name %>, (respond_to?('<%= attribute.type %>_edit') ? send('<%= attribute.type %>_edit',
-          @<%= singular_table_name %>.<%= name %>, @<%= singular_table_name %>.class.columns_hash['<%= name %>']) : {})
+      = f.input :<%= attribute.name %>, (respond_to?('<%= attribute.type %>_edit') ? send('<%= attribute.type %>_edit',
+       @<%= singular_table_name %>.<%= attribute.name %>, {has_one: <%= attribute.has_one? %>, column: @<%= singular_table_name %>.class.columns_hash['<%= attribute.name %>']}) : {})
 <% end -%>
       %br
-<% for ref in references -%>
-      = render 'nests', f: f, nested: '<%= ref.name %>', has_one: <%= (ref.type == :has_one) %>
+<% references.each do |name, ref|-%>
+      = render 'nests', f: f, nested: '<%= name %>', has_one: <%= ref.has_one? %>
 <% end -%>
 
       .panel-footer
         .col-3 &nbsp;
         .col-offset-3
           .actions
-            = f.button :submit, :disable_with => 'Please wait ...'
+            = f.button :submit, disable_with: t('.disable_with', default: 'Please wait ...')

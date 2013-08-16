@@ -2,35 +2,37 @@
   .col-10
     .subnav
       %ul.nav.nav-pills
-        %li= link_to 'New <%= title_name %>', new_<%= singular_table_name %>_path
-        %li= link_to 'All <%= plural_title_name %>', <%= table_name %>_path
-        %li= link_to 'Edit this <%= title_name %>', edit_<%= singular_table_name %>_path(@<%= singular_table_name %>)
-        %li.active= link_to 'Show this <%= title_name %>', @<%= singular_table_name %>
+        %li= link_to t('.new_<%= title_name %>'), new_<%= singular_table_name %>_path
+        %li= link_to t('.all_<%= plural_title_name %>'), <%= table_name %>_path
+        %li= link_to t('.edit_this_<%= title_name %>'), edit_<%= singular_table_name %>_path(@<%= singular_table_name %>)
+        %li.active= link_to t('.show_this_<%= title_name %>'), @<%= singular_table_name %>
 
-    %h1 Show <%= title_name %>
+    %h1= t '.show_<%= title_name %>'
 
     - unless notice.blank?
       .alert.alert-success
-        %button.close{title: 'Close notification', data: {dismiss: 'alert'}} ✖
+        %button.close{title: t('.close_notification', default: 'Close Notification'), data: {dismiss: 'alert'}} ✖
         = notice
 
     %section[@<%= singular_name %>]
       .panel
         .panel-heading
-          %b <%= title_name %>
+          %b= t '.<%= title_name %>'
         %dl.dl-horizontal
-<% self_attributes.each do |name, attribute| -%>
-          %dt <%= name.titleize %>
-          - value = @<%= singular_table_name %>.<%= name %>
-          %dd!= respond_to?('<%= attribute.type %>_view') ? send('<%= attribute.type %>_view', value,
-            @<%= singular_table_name %>.class.columns_hash['<%= name %>']) : (value.blank? ? '&nbsp;' : value)
+<% belongs_to.each do |name, ref|-%>
+          %dt= t '.<%= ref.name %>'
+          - value = @<%= singular_table_name %>.<%= ref.name %>
+          %dd!= respond_to?('select_view') ? send('select_view', value,
+            @<%= singular_table_name %>.class.columns_hash['<%= ref.name %>']) : (value.name.blank? ? '&nbsp;' : value.name)
 <% end -%>
-<% for ref in references -%>
-        = render 'view_nests', f: @<%= singular_table_name %>.<%= ref.has_many? ? ref.name.pluralize : ref.name %>, nested: '<%= ref.name %>', has_one: <%= ref.has_one?.to_s %>
+<% self_attributes.each do |name, attribute| -%>
+          %dt= t '.<%= attribute.name %>'
+          - value = @<%= singular_table_name %>.<%= attribute.name %>
+          %dd!= respond_to?('<%= attribute.type %>_view') ? send('<%= attribute.type %>_view', value,
+            @<%= singular_table_name %>.class.columns_hash['<%= attribute.name %>']) : (value.blank? ? '&nbsp;' : value)
+<% end -%>
+<% references.each do |name, ref|-%>
+        = render 'view_nests', f: @<%= singular_table_name %>.<%= ref.name %>, nested: '<%= name %>', has_one: <%= ref.has_one? %>
 <% end -%>
 
-  .col-2
-    #sidebar-form-sections.well.nav.sidebar-nav
-      %h3 Sidebar
-      %ul.nav.nav-list
-        %li= link_to "<%= title_name %> #{@<%= singular_table_name %>.id}", "#<%= singular_table_name %>_#{@<%= singular_table_name %>.id}"
+  = render 'sidebar_sections'

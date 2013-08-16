@@ -1,1 +1,20 @@
-= render 'view_fields', item: item
+%section[item]
+  %dl.dl-horizontal
+<% ref_belongs_to.each do |name, ref|-%>
+    %dt= t '.<%= ref.name %>'
+    - value = item.<%= ref.name %>.name
+    %dd!= respond_to?("select_view") |
+      ? send("select_view", value, {has_one: <%= ref.has_one? %>, column: item.nil? ? nil : item.class.columns_hash['<%= ref.name %>']}) |
+      : (value.blank? ? '&nbsp;' : value) |
+<% end -%>
+<% ref_attributes.each do |name, ref| -%>
+    %dt= t '.<%= ref.name %>'
+    - value = item.<%= ref.name %>
+    %dd!= respond_to?("<%= ref.type %>_view") |
+      ? send("<%= ref.type %>_view", value, {has_one: <%= ref.has_one? %>, column: item.nil? ? nil : item.class.columns_hash['<%= ref.name %>']}) |
+      : (value.blank? ? '&nbsp;' : value) |
+<% end -%>
+
+<% ref_references.each do |name, att| -%>
+= render 'view_nests', f: item.<%= att.name %>, nested: '<%= name %>', has_one: <%= att.has_one? %>
+<% end -%>

@@ -5,13 +5,13 @@ class SchemaAttributes < Hash
   class << self
 
     def parse(model)
+      model = model.to_s.singularize
       (@@cached_atts ||= {})[model] ||= begin
-      #begin
         table_data = _filter_lines(
           _read_files(model,
           _model_schema_paths(model))).map {|att|
             str = to_script(*att)
-            [att[1], Rails::Generators::GeneratedAttribute.parse(str)] unless str.nil?
+            [att[1].singularize, Rails::Generators::GeneratedAttribute.parse(str)] unless str.nil? || att[1].nil?
         }
         (schema_attributes = SchemaAttributes[table_data.reject(&:blank?)]).model= model
         schema_attributes
@@ -47,7 +47,7 @@ class SchemaAttributes < Hash
 
     def _read_files(model, paths)
       ((paths.map {|f|
-        File.read(f)[/(?:.*table "?:?#{table_name model}.*|class #{model.camelize}.*)([\s\S]*?)(?=^\s*end\s*$)/, 1]
+        File.read(f)[/(?:.*table "?:?#{table_name model}.*|class #{model.camelize}.*)([\s\S]*?)(?=^\s*end\s*$)/, 1] if File.exist?(f)
       }) * '').lines
     end
 
@@ -63,6 +63,11 @@ class SchemaAttributes < Hash
   end
   def merge!(*several_variants)
     super *several_variants
+    replace Hash[map { |m,t|
+      t.name = t.name.singularize.pluralize if references? t.name and t.has_many?
+      [m.to_s.singularize.to_sym, t]
+    }]
+    #rehash
     (@@cached_atts ||= {})[model] = self unless model.blank?
     self
   end
@@ -73,6 +78,14 @@ class SchemaAttributes < Hash
 
   def belongs_to? ref
     !self[ref].nil? && self[ref].type == :belongs_to
+  end
+
+  def has_one? ref
+    !self[ref].nil? && self[ref].relationship == :has_one
+  end
+
+  def name_for ref
+    self[ref].name unless self[ref].nil?
   end
 
   def references? ref
@@ -96,7 +109,8 @@ class SchemaAttributes < Hash
 
   def permissible
     names = ''
-    accessible.keys.reject(&:blank?).each { |name| names << ":#{name}, " }
+    belongs_to.values.each { |att| names << ":#{att.name}_id, " }
+    accessible.values.each { |att| names << ":#{att.name}, " }
     names.chomp(', ')
   end
 end

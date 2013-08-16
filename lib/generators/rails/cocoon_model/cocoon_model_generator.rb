@@ -55,11 +55,11 @@ module Rails
       end
 
       def has_many?
-        %w(has_many).include?(relationship)
+        relationship == :has_many
       end
 
       def has_one?
-        %w(has_one).include?(relationship)
+        relationship == :has_one
       end
     end
 
@@ -76,6 +76,7 @@ module Rails
         super args, *options
         attr = {}
         attributes.each
+        #@schema_attributes = SchemaAttributes.parse(singular_name)
         @schema_attributes = SchemaAttributes.populate(singular_name,
           Hash[attributes.map {|a| [a.name, a]}])
       end
@@ -102,10 +103,10 @@ module Rails
         say_status :invoke, 'parent_association', :white
         @schema_attributes.belongs_to.each do |name, att|
           assoc = att.relationship
-          inject_relationship assoc, singular_name, att.singular_name
-          inject_associate assoc, singular_name, att.singular_name
-          inject_serialization assoc, singular_name, att.singular_name if
-              is_file? serializer_file att.singular_name
+          inject_relationship assoc, singular_name, name
+          inject_associate assoc, singular_name, name
+          inject_serialization assoc, singular_name, name if
+              is_file? serializer_file name
         end
       end
 
@@ -120,36 +121,38 @@ module Rails
       end
 
       def inject_relationship(assoc, ref, model)
-        assoc, ref = assoc_ref(assoc, ref).split(' :')
-        inject_file "# #{model}:---#{assoc}--<:#{ref}", model_file(ref.singularize), true
+        insert_into_file model_file(ref), before: "belongs_to :#{model}" do
+          assoc, ref = assoc_ref(assoc, ref).split(' :')
+          "# #{model}:---#{assoc}--<:#{ref}\n  "
+        end
       end
 
       def inject_associate(assoc, ref, model)
-        inject_accepts_nested_attributes_for( (assoc[/one/] ? ref : ref.pluralize), model_file(model))
+        inject_accepts_nested_attributes_for(assoc, ref, model_file(model))
         inject_file(assoc_ref(assoc, ref), model_file(model))
-        inject_attr_accessible(ref, model)
       end
 
       def inject_serialization(assoc, ref, model)
         create_serializer model unless is_file? serializer_file model
-        inject_file( assoc_ref(assoc, ref), serializer_file(model), true)
+        inject_file( assoc_ref(assoc, ref), serializer_file(model))
       end
 
       def assoc_ref assoc, ref
-        ref[/.*/] = ref.pluralize unless assoc =~ /one/
+        ref = ref.pluralize unless assoc =~ /one/
+        #ref[/.*/] = ref.pluralize unless assoc =~ /one/
         "#{assoc} :#{ref}"
       end
 
       def model_file model
-        @model_file[model.parameterize] ||= File.join('app/models', "#{model}.rb")
+        @model_file[model.to_s.parameterize] ||= File.join('app/models', "#{model}.rb")
       end
 
       def serializer_file model
-        @serializer_file[model.parameterize] ||= File.join('app/serializers', "#{model}_serializer.rb")
+        @serializer_file[model.to_s.parameterize] ||= File.join('app/serializers', "#{model}_serializer.rb")
       end
 
       def is_file? file
-        @is_file[file.parameterize] ||= File.exists? file
+        @is_file[file.to_s.parameterize] ||= File.exists? file
       end
 
       def in_file?(needle, file, contents='')
@@ -157,28 +160,21 @@ module Rails
         true
       end
 
-      def inject_file(ref, model, only=false)
+      def inject_file(ref, model)
         unless in_file? ref, model
-          inject_into_class model, model[/\w*(?=\.)/].camelize do
-            "  #{ref}" + (only ? "\n" : ", dependent: :destroy\n")
+          inject_into_class model, model[/\w*(?=\.)/].camelize, verbose: false do
+            "  #{ref}\n"
+            #"  #{ref}" + (only ? "\n" : ", dependent: :destroy\n")
           end
           true
         end
       end
 
-      def inject_attr_accessible(ref, model)
-        inject_into_file "app/controllers/#{plural_name}_controller.rb", after: "#{model}_attributes" do  |m|
-m << <<eod
-          #{ref}_attributes: [#{SchemaAttributes.parse(ref).permissible}
-        ],
-eod
-        end
-        true
-      end
-
-      def inject_accepts_nested_attributes_for(ref, model)
-        inject_file "accepts_nested_attributes_for :#{ref}, reject_if: :all_blank, allow_destroy: true",
-            model, true
+      def inject_accepts_nested_attributes_for(assoc, ref, model)
+        injection = "accepts_nested_attributes_for :#{(assoc[/one/] ? ref : ref.pluralize)}"
+        injection << ", allow_destroy: true" unless assoc =~ /one/
+        injection << ', update_only: true'
+        inject_file injection, model
       end
 
     end
