@@ -13,6 +13,10 @@ class <%= controller_class_name %>Controller < InheritedResources::Base
     true
   end
 
+  def xeditable?
+    true # Or something like current_user.xeditable?
+  end
+
   protected
   def collection
     @<%= plural_table_name %> ||= end_of_association_chain.page(params[:page]).per(15)
