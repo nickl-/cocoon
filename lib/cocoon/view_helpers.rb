@@ -12,7 +12,7 @@ module Cocoon
     # - *f* : the form this link should be placed in
     # - *html_options*:  html options to be passed to link_to (see <tt>link_to</tt>)
     # - *&block*:        the output of the block will be show in the link, see <tt>link_to</tt>
-    
+
     def link_to_remove_association(*args, &block)
       if block_given?
         f            = args.first
@@ -36,6 +36,11 @@ module Cocoon
         html_options[:'data-wrapper-class'] = wrapper_class if wrapper_class.present?
 
         hidden_field_tag("#{f.object_name}[_destroy]", f.object._destroy) + link_to(name, '#', html_options)
+
+        #is_dynamic = f.object.nil? || f.object.new_record?
+        #html_options[:class] = [html_options[:class], "remove_fields #{is_dynamic ? 'dynamic' : 'existing'}"].compact.join(' ')
+        #hidden_field_tag("#{f.object_name}[_destroy]") + link_to(name, '#', html_options)
+
       end
     end
 
@@ -60,7 +65,7 @@ module Cocoon
     #              - *:locals*     : the locals hash in the :render_options is handed to the partial
     #          - *:partial*        : explicitly override the default partial name
     #          - *:wrap_object*    : a proc that will allow to wrap your object, especially suited when using
-    #                                decorators, or if you want special initialisation   
+    #                                decorators, or if you want special initialisation
     #          - *:form_name*      : the parameter for the form in the nested form partial. Default `f`.
     #          - *:count*          : Count of how many objects will be added on a single click. Default `1`.
     # - *&block*:        see <tt>link_to</tt>
@@ -93,7 +98,7 @@ module Cocoon
         new_object = wrap_object.call(new_object) if wrap_object.respond_to?(:call)
 
         html_options[:'data-association-insertion-template'] = CGI.escapeHTML(render_association(association, f, new_object, form_parameter_name, render_options, override_partial)).html_safe
-        
+
         html_options[:'data-count'] = count if count > 0
 
         link_to(name, '#', html_options)
@@ -105,7 +110,7 @@ module Cocoon
     # will create new Comment with author "Admin"
 
     def create_object(f, association, force_non_association_create=false)
-      assoc = f.object.class.reflect_on_association(association)
+      assoc = f.object.class.reflect_on_association(association)  unless f.object.nil?
 
       assoc ? create_object_on_association(f, association, assoc, force_non_association_create) : create_object_on_non_association(f, association)
     end
@@ -119,7 +124,7 @@ module Cocoon
     def create_object_on_non_association(f, association)
       builder_method = %W{build_#{association} build_#{association.to_s.singularize}}.select { |m| f.object.respond_to?(m) }.first
       return f.object.send(builder_method) if builder_method
-      raise "Association #{association} doesn't exist on #{f.object.class}"
+      raise "Association #{association} doesn't exist on #{f.object.class}" unless f.object.nil?
     end
 
     def create_object_on_association(f, association, instance, force_non_association_create)
