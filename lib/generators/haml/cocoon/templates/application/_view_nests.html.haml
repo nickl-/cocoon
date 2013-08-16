@@ -3,9 +3,9 @@
     .panel
       .panel-heading
         - if has_one
-          %b= nested.titleize
+          %b= t ".#{nested}"
         - else
-          %b= nested.pluralize.titleize
+          %b= t ".#{nested.pluralize}"
       - if has_one
         = render "view_#{nested}_fields", item: f
       - else

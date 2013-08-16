@@ -2,15 +2,17 @@
   .panel
     .panel-heading
       - if has_one
-        %b= nested.titleize
+        %b= t ".#{nested}"
       - else
-        %b= nested.pluralize.titleize
+        %b= t ".#{nested.pluralize}"
     - if has_one
       = f.simple_fields_for nested.to_sym do |item|
         = render "#{nested}_fields", f: item
+      - if f.object.send(nested).nil?
+        = render_add_association f, nested.to_sym
     - else
       = f.simple_fields_for nested.pluralize.to_sym do |item|
         = render "#{nested}_fields", f: item
-    .panel-footer
-      = link_to_add_association "Add #{nested.titleize}", f,
-          nested.pluralize.to_sym, class: 'btn btn-default btn-mini'
+      .panel-footer
+        = link_to_add_association "Add #{nested.titleize}", f,
+            nested.pluralize.to_sym, class: 'btn btn-default btn-mini'
