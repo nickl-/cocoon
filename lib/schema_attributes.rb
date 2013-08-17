@@ -1,11 +1,20 @@
 require 'generators/rails/cocoon_model/cocoon_model_generator'
 class SchemaAttributes < Hash
   attr_accessor :model
+  @@path = nil
+  def path
+    @@path
+  end
 
   class << self
 
-    def parse(model)
-      model = model.to_s.singularize
+    def path
+      return '' if @@path.nil?
+      @@path
+    end
+
+    def parse(pmodel)
+      model = real_model(pmodel)
       (@@cached_atts ||= {})[model] ||= begin
         table_data = _filter_lines(
           _read_files(model,
@@ -18,18 +27,25 @@ class SchemaAttributes < Hash
       end
     end
 
+    def real_model(pmodel)
+      model = ns_model = pmodel.to_s.singularize
+      model = model.split('/').pop if model =~ /\//
+      @@path ||= ns_model.chomp(model)
+      model
+    end
+
     def populate(name, attributes)
       sa = SchemaAttributes.new
-      sa.model= name
+      sa.model= real_model name
       (@@cached_atts ||= {})[name] = sa.merge! attributes
     end
 
     private
 
     def table_name name
-      return name.pluralize if
+      return "#{path.gsub(/\//,'_')}#{name.pluralize}" if
           (!defined?(ActiveRecord::Base) || ActiveRecord::Base.pluralize_table_names)
-      name
+      "#{path.gsub(/\//,'_')}#{name}"
     end
 
     def to_script(*args)
@@ -42,7 +58,7 @@ class SchemaAttributes < Hash
     end
 
     def _model_schema_paths(model)
-      Dir.glob("db/migrate/*#{table_name model}.rb") + ['db/schema.rb', "app/models/#{model.singularize}.rb"]
+      Dir.glob("db/migrate/*#{table_name model}.rb") + ['db/schema.rb', "app/models/#{path}#{model}.rb"]
     end
 
     def _read_files(model, paths)
@@ -102,7 +118,7 @@ class SchemaAttributes < Hash
 
   def accessible
     reject {|name, att| name.nil? ||
-      %w(created_at updated_at).include?(name) ||
+      %w(created_at updated_at created_by updated_by).include?(name) ||
         belongs_to?(name) ||
         references?(name)}
   end

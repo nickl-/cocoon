@@ -3,7 +3,7 @@
     .subnav
       %ul.nav.nav-pills
         %li= link_to t('.new_<%= title_name %>'), new_<%= singular_table_name %>_path
-        %li.active= link_to t('.all_<%= plural_title_name %>'), <%= table_name %>_path
+        %li.active= link_to t('.all_<%= plural_title_name %>'), <%= plural_table_name %>_path
         %li.disabled= link_to t('.edit_this_<%= title_name %>'), '#'
         %li.disabled= link_to t('.show_this_<%= title_name %>'), '#'
 
@@ -16,14 +16,14 @@
 <% end -%>
         %th
 
-      - @<%= plural_table_name %>.each do |<%= singular_table_name %>|
+      - @<%= plural_table_name %>.each do |<%= singular_name %>|
         %tr
 <% for attribute in attributes -%>
-          %td= <%= singular_table_name %>.<%= attribute.name %><%= attribute.belongs_to? ? '.name' : '' %>
+          %td= <%= singular_name %>.<%= attribute.name %><%= attribute.reference? ? '.name' : '' %>
 <% end -%>
           %td{align: 'right'}
-            = link_to t('.show'), <%= singular_table_name %>, class: 'btn btn-primary btn-xs'
-            = link_to t('.edit'), edit_<%= singular_table_name %>_path(<%= singular_table_name %>), class: 'btn btn-success btn-xs'
-            = link_to t('.destroy'), <%= singular_table_name %>, data: { confirm: 'Are you sure?' }, method: :delete, class: 'btn btn-danger btn-xs'
+            = link_to t('.show'), <%= singular_name %>, class: 'btn btn-primary btn-xs'
+            = link_to t('.edit'), edit_<%= singular_table_name %>_path(<%= singular_name %>), class: 'btn btn-success btn-xs'
+            = link_to t('.destroy'), <%= singular_name %>, data: { confirm: 'Are you sure?' }, method: :delete, class: 'btn btn-danger btn-xs'
     = paginate @<%= plural_table_name %>
 %br

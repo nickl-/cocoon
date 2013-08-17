@@ -3,11 +3,11 @@
   = link_to_remove_association '✖', f,
     class: 'close', title: t('.destroy_<%= ref_name %>', default: 'Destroy <%= ref_name.titleize %>'),
     data: {confirm: t('.confirm', default: 'Are you sure you want to destroy this entity and all its children.')}
-<% end %>
+<% end -%>
 <% ref_belongs_to.each do |name, ref|-%>
   = f.association :<%= ref.name %>, (respond_to?('select_edit') ? send('select_edit',
       f.object.nil? ? nil : f.object.<%= ref.name %>, {has_one: <%= ref.has_one? %>, column: f.object.nil? ? nil : f.object.class.columns_hash['<%= ref.name %>']}) : {})
-<% end %>
+<% end -%>
 <% ref_attributes.each do |name, attribute| -%>
   = f.input :<%= attribute.name %>, (respond_to?('<%= attribute.type %>_edit') ? send('<%= attribute.type %>_edit',
       f.object.nil? ? nil : f.object.<%= attribute.name %>, {has_one: <%= attribute.has_one? %>, column: f.object.nil? ? nil : f.object.class.columns_hash['<%= attribute.name %>']}) : {})

@@ -77,14 +77,14 @@ module Rails
         attr = {}
         attributes.each
         #@schema_attributes = SchemaAttributes.parse(singular_name)
-        @schema_attributes = SchemaAttributes.populate(singular_name,
+        @schema_attributes = SchemaAttributes.populate(file_path,
           Hash[attributes.map {|a| [a.name, a]}])
       end
 
       def self_association
         say_status :invoke, 'self_association', :white
         create_serializer singular_name
-        Dir.glob('app/models/*.rb') do |file|
+        Dir.glob("app/models/#{SchemaAttributes.path}*.rb") do |file|
           ref_name = file[/\w*(?=\.)/]
           ref = SchemaAttributes.parse(ref_name)
           if ref.belongs_to? singular_name
@@ -157,11 +157,11 @@ module Rails
       end
 
       def model_file model
-        @model_file[model.to_s.parameterize] ||= File.join('app/models', "#{model}.rb")
+        @model_file[model.to_s.parameterize] ||= File.join('app/models', "#{SchemaAttributes.path}#{model}.rb")
       end
 
       def serializer_file model
-        @serializer_file[model.to_s.parameterize] ||= File.join('app/serializers', "#{model}_serializer.rb")
+        @serializer_file[model.to_s.parameterize] ||= File.join('app/serializers', "#{SchemaAttributes.path}#{model}_serializer.rb")
       end
 
       def is_file? file
@@ -175,7 +175,8 @@ module Rails
 
       def inject_file(ref, model)
         unless in_file? ref, model
-          inject_into_class model, model[/\w*(?=\.)/].camelize, verbose: false do
+          klass = "#{SchemaAttributes.path}#{model[/\w*(?=\.)/]}".camelize
+          inject_into_class model, klass, verbose: false do
             "  #{ref}\n"
             #"  #{ref}" + (only ? "\n" : ", dependent: :destroy\n")
           end

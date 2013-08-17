@@ -16,7 +16,7 @@ module Haml
             @ref_name = name
             src = "_view_%ref_name%_fields.html.haml"
             dst = convert_encoded_instructions(
-                "app/views/#{table_name}/_view_%ref_name%_fields.html.haml"
+                "app/views/#{SchemaAttributes.path}#{plural_name}/_view_%ref_name%_fields.html.haml"
             )
             template src, dst
             template src.gsub(/_view/, ''), dst.gsub(/_view/, '')

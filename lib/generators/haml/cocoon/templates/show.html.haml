@@ -4,8 +4,8 @@
       %ul.nav.nav-pills
         %li= link_to t('.new_<%= title_name %>'), new_<%= singular_table_name %>_path
         %li= link_to t('.all_<%= plural_title_name %>'), <%= table_name %>_path
-        %li= link_to t('.edit_this_<%= title_name %>'), edit_<%= singular_table_name %>_path(@<%= singular_table_name %>)
-        %li.active= link_to t('.show_this_<%= title_name %>'), @<%= singular_table_name %>
+        %li= link_to t('.edit_this_<%= title_name %>'), edit_<%= singular_table_name %>_path(@<%= singular_name %>)
+        %li.active= link_to t('.show_this_<%= title_name %>'), @<%= singular_name %>
 
     %h1= t '.show_<%= title_name %>'
 
@@ -21,18 +21,18 @@
         %dl.dl-horizontal
 <% belongs_to.each do |name, ref|-%>
           %dt= t '.<%= ref.name %>'
-          - value = @<%= singular_table_name %>.<%= ref.name %>
+          - value = @<%= singular_name %>.<%= ref.name %>
           %dd!= respond_to?('select_view') ? send('select_view', value,
-            @<%= singular_table_name %>.class.columns_hash['<%= ref.name %>']) : (value.name.blank? ? '&nbsp;' : value.name)
+            @<%= singular_name %>.class.columns_hash['<%= ref.name %>']) : (value.name.blank? ? '&nbsp;' : value.name)
 <% end -%>
 <% self_attributes.each do |name, attribute| -%>
           %dt= t '.<%= attribute.name %>'
-          - value = @<%= singular_table_name %>.<%= attribute.name %>
+          - value = @<%= singular_name %>.<%= attribute.name %>
           %dd!= respond_to?('<%= attribute.type %>_view') ? send('<%= attribute.type %>_view', value,
-            @<%= singular_table_name %>.class.columns_hash['<%= attribute.name %>']) : (value.blank? ? '&nbsp;' : value)
+            @<%= singular_name %>.class.columns_hash['<%= attribute.name %>']) : (value.blank? ? '&nbsp;' : value)
 <% end -%>
 <% references.each do |name, ref|-%>
-        = render 'view_nests', f: @<%= singular_table_name %>.<%= ref.name %>, nested: '<%= name %>', has_one: <%= ref.has_one? %>
+        = render 'view_nests', f: @<%= singular_name %>.<%= ref.name %>, nested: '<%= name %>', has_one: <%= ref.has_one? %>
 <% end -%>
 
   = render 'sidebar_sections'

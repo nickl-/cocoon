@@ -1,8 +1,8 @@
-= simple_form_for(@<%= singular_table_name %>, :html => { :class => 'form-horizontal' }) do |f|
+= simple_form_for(@<%= singular_name %>, :html => { :class => 'form-horizontal' }) do |f|
 
   = f.error_notification
 
-  %section[@<%= singular_table_name %>]
+  %section[@<%= singular_name %>]
     .panel
       .panel-heading
         %b= t '.<%= title_name %>'
@@ -12,7 +12,7 @@
 <% end %>
 <% self_attributes.each do |name, attribute| -%>
       = f.input :<%= attribute.name %>, (respond_to?('<%= attribute.type %>_edit') ? send('<%= attribute.type %>_edit',
-       @<%= singular_table_name %>.<%= attribute.name %>, {has_one: <%= attribute.has_one? %>, column: @<%= singular_table_name %>.class.columns_hash['<%= attribute.name %>']}) : {})
+       @<%= singular_name %>.<%= attribute.name %>, {has_one: <%= attribute.has_one? %>, column: @<%= singular_name %>.class.columns_hash['<%= attribute.name %>']}) : {})
 <% end -%>
       %br
 <% references.each do |name, ref|-%>
