@@ -110,19 +110,6 @@ module Rails
         end
       end
 
-      def inject_ar_audit_tracer
-        Dir.glob('db/migrate/*.rb') do |file|
-          contents = ''
-          unless in_file? 't.authorstamps', file, contents
-            if contents =~ /t.timestamps/
-              gsub_file file, /t.timestamps/ do |match|
-                match << "\n      t.authorstamps"
-              end
-            end
-          end
-        end
-      end
-
       protected
 
       def create_serializer model
