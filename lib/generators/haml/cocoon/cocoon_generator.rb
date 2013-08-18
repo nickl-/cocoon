@@ -13,7 +13,7 @@ module Haml
       def recurse ref
         SchemaAttributes.parse(ref).references.each do |name, ref|
           if ref.type == :references
-            @ref_name = name
+            (@ref_name ||= []) << name.to_s
             src = "_view_%ref_name%_fields.html.haml"
             dst = convert_encoded_instructions(
                 "app/views/#{SchemaAttributes.path}#{plural_name}/_view_%ref_name%_fields.html.haml"
@@ -50,7 +50,7 @@ module Haml
       end
 
       def ref_name
-        @ref_name.to_s
+        @ref_name.last
       end
 
       def ref_attributes
@@ -66,15 +66,11 @@ module Haml
       end
 
       def ref_belongs_to
-        SchemaAttributes.parse(ref_name).belongs_to.reject {|n,a| n == singular_name}
+        SchemaAttributes.parse(ref_name).belongs_to.reject {|n,a| n == singular_name || @ref_name.include?(n)}
       end
 
       def self_attributes
         SchemaAttributes.parse(singular_name).accessible
-      end
-
-      def self_belongs_to
-        SchemaAttributes.parse(singular_name).belongs_to
       end
 
       def title_name

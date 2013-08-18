@@ -19,7 +19,7 @@ class <%= controller_class_name %>Controller < InheritedResources::Base
 
   protected
   def collection
-    @<%= plural_table_name %> ||= end_of_association_chain.page(params[:page]).per(15)
+    @<%= plural_name %> ||= end_of_association_chain.page(params[:page]).per(15)
   end
 
   def build_resource_params

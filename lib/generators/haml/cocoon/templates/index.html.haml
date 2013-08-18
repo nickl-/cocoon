@@ -7,7 +7,7 @@
         %li.disabled= link_to t('.edit_this_<%= title_name %>'), '#'
         %li.disabled= link_to t('.show_this_<%= title_name %>'), '#'
 
-    %h1= t '.all_<%= plural_title_name %>'
+    %h1= t '.all_<%= plural_name %>'
 
     %table{class: 'table table-condensed table-striped'}
       %tr
@@ -16,7 +16,7 @@
 <% end -%>
         %th
 
-      - @<%= plural_table_name %>.each do |<%= singular_name %>|
+      - @<%= plural_name %>.each do |<%= singular_name %>|
         %tr
 <% for attribute in attributes -%>
           %td= <%= singular_name %>.<%= attribute.name %><%= attribute.reference? ? '.name' : '' %>
@@ -25,5 +25,5 @@
             = link_to t('.show'), <%= singular_name %>, class: 'btn btn-primary btn-xs'
             = link_to t('.edit'), edit_<%= singular_table_name %>_path(<%= singular_name %>), class: 'btn btn-success btn-xs'
             = link_to t('.destroy'), <%= singular_name %>, data: { confirm: 'Are you sure?' }, method: :delete, class: 'btn btn-danger btn-xs'
-    = paginate @<%= plural_table_name %>
+    = paginate @<%= plural_name %>
 %br

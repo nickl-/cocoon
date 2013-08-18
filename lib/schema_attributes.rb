@@ -63,7 +63,14 @@ class SchemaAttributes < Hash
 
     def _read_files(model, paths)
       ((paths.map {|f|
-        File.read(f)[/(?:.*table "?:?#{table_name model}.*|class #{model.camelize}.*)([\s\S]*?)(?=^\s*end\s*$)/, 1] if File.exist?(f)
+        case f[/(model|schema|migrate)/]
+          when 'model'
+            File.read(f)[/(?:class #{(path+model).camelize}.*)([\s\S]*?)(?=^\s*end\s*$)/, 1]
+          when 'schema'
+            File.read(f)[/(?:.*table "?#{table_name model}.*)([\s\S]*?)(?=^\s*end\s*$)/, 1]
+          when 'migrate'
+            File.read(f)[/(?:.*table :?#{table_name model}.*)([\s\S]*?)(?=^\s*end\s*$)/, 1]
+        end
       }) * '').lines
     end
 
