@@ -7,12 +7,12 @@
         %b= t ".#{nested.pluralize}"
     - if has_one
       = f.simple_fields_for nested.to_sym do |item|
-        = render "#{nested}_fields", f: item
+        = render "#{nested}_fields", f: item, locals: {nested: nested, has_one: has_one}
       - if f.object.send(nested).nil?
         = render_add_association f, nested.to_sym
     - else
       = f.simple_fields_for nested.pluralize.to_sym do |item|
-        = render "#{nested}_fields", f: item
+        = render "#{nested}_fields", f: item, locals: {nested: nested, has_one: has_one}
       .panel-footer
         = link_to_add_association "Add #{nested.titleize}", f,
             nested.pluralize.to_sym, class: 'btn btn-default btn-mini'

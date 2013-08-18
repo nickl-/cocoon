@@ -7,8 +7,8 @@
         - else
           %b= t ".#{nested.pluralize}"
       - if has_one
-        = render "view_#{nested}_fields", item: f
+        = render "view_#{nested}_fields", item: f, locals: {nested: nested, has_one: has_one}
       - else
         - f.each do |item|
-          = render "view_#{nested}_fields", item: item
+          = render "view_#{nested}_fields", item: item, locals: {nested: nested, has_one: has_one}
         %hr
