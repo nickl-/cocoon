@@ -19,17 +19,9 @@
         .panel-heading
           %b= t '.<%= title_name %>'
         %dl.dl-horizontal
-<% belongs_to.each do |name, ref|-%>
-          %dt= t '.<%= ref.name %>'
-          - value = @<%= singular_name %>.<%= ref.name %>
-          %dd!= respond_to?('select_view') ? send('select_view', value,
-            @<%= singular_name %>.class.columns_hash['<%= ref.name %>']) : (value.name.blank? ? '&nbsp;' : value.name)
-<% end -%>
-<% self_attributes.each do |name, attribute| -%>
+<% (belongs_to.merge self_attributes).each do |name, attribute| -%>
           %dt= t '.<%= attribute.name %>'
-          - value = @<%= singular_name %>.<%= attribute.name %>
-          %dd!= respond_to?('<%= attribute.type %>_view') ? send('<%= attribute.type %>_view', value,
-            @<%= singular_name %>.class.columns_hash['<%= attribute.name %>']) : (value.blank? ? '&nbsp;' : value)
+          %dd= inline_input @<%= singular_name %>, '<%= attribute.name %>'
 <% end -%>
 <% references.each do |name, ref|-%>
         = render 'view_nests', f: @<%= singular_name %>.<%= ref.name %>, nested: '<%= name %>', has_one: <%= ref.has_one? %>
