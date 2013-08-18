@@ -21,11 +21,13 @@ module Rails
       def recurse_references(model, indent)
         ret = ''
         SchemaAttributes.parse(model).references.each do |name, att|
-          ret << ",\n      #{indent}#{att.name}_attributes: ["
-          ret << ":_destroy, :id, "
-          ret << SchemaAttributes.parse(name).permissible
-          ret << recurse_references(name, indent+indent)
-          ret << ']'
+              indentation = indent
+              attribute_name = att.name
+              permissible = SchemaAttributes.parse(name).permissible
+              recurse = recurse_references(name, indent+'  ')
+              source  = File.expand_path(find_in_source_paths('strong_parameters.erb'))
+              context = instance_eval('binding')
+              ret << ERB.new(::File.binread(source), nil, '-', '@output_buffer2').result(context).chomp
         end
         ret
       end
