@@ -11,11 +11,13 @@ module NestedXMLResponder
       root = resource.table_name
     end
 
-    render :text => nested.to_xml(root: root)
+    render :text => nested.to_xml(root: root, skip_types: true)
   end
 end
 
 class ApplicationResponder < ActionController::Responder
+  include Responders::FlashResponder
+  include Responders::HttpCacheResponder
   include NestedXMLResponder
+  #include Responders::CollectionResponder
 end
-

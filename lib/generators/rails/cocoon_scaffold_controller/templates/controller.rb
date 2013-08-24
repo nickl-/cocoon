@@ -3,7 +3,7 @@ class <%= controller_class_name %>Controller < InheritedResources::Base
   self.responder = ApplicationResponder
   respond_to :html, :xml, :json
 
-  protect_from_forgery
+  #protect_from_forgery  with: :exception
 
 <% if options[:singleton] -%>
   defaults :singleton => true
@@ -23,9 +23,9 @@ class <%= controller_class_name %>Controller < InheritedResources::Base
   end
 
   def build_resource_params
-    [params.require(:<%= singular_table_name %>).permit(
+    [params.require(:<%= singular_name %>).permit(
       [:_destroy, :id<%= permissible_attributes.blank? ? '' : ", #{permissible_attributes}" %><%= strong_parameters %>]
-    )] if params[:<%= singular_table_name %>].present?
+    )] if params[:<%= singular_name %>].present?
   end
 
 end
