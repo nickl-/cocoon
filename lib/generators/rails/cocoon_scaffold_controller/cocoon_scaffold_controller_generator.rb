@@ -8,8 +8,10 @@ module Rails
       remove_hook_for :template_engine
       hook_for :template_engine, as: :cocoon
 
-      def appliaction_responder
-        copy_file 'application_responder.rb', 'lib/application_responder.rb'
+      def application_responder
+        return copy_file 'application_responder.rb', 'lib/application_responder.rb' unless
+            File.exists? 'lib/application_responder.rb'
+        say_status :exist, 'lib/application_responder.rb', :blue
       end
 
       protected
