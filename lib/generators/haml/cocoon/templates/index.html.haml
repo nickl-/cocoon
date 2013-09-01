@@ -9,7 +9,6 @@
         %tr
 <% for attribute in attributes -%>
 <% unless attribute.type == :text -%>
-          %th <%= attribute.type == 'text' %>
           %th{data: {type: '<%= attribute.type %>'}}= t('.<%= attribute.name %>', default: '<%= attribute.name.titleize %>')
 <% end -%>
 <% end -%>
