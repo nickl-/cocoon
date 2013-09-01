@@ -1,10 +1,5 @@
 %section[item]
   %dl.dl-horizontal
     - item.class.columns_hash.each do |name, attribute|
-      - unless name[/id$|at$/]
-        - value = item.attributes[name]
-      - else if name[/(\w*)_id$/]
-        - if item.respond_to? $1
-          - value = item.send($1).name
       %dt= t ".#{name}", default: "#{name}".titleize
       %dd!= custom_view item, name
