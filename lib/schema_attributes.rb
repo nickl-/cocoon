@@ -60,8 +60,8 @@ module Rails
 end
 
 class SchemaAttributes < Hash
-  attr_accessor :model
-  @@path = nil
+  class_attribute :model, :path
+
   def path
     @@path
   end
