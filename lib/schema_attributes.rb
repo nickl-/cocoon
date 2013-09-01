@@ -136,11 +136,13 @@ class SchemaAttributes < Hash
 
     def _filter_lines(lines)
       before = ''
-      (lines.map {|l|
-        l = "#{l}  :#{before[2]}" unless before.blank?
+      lines.map! {|l|
+        l = "#{l.chomp}  :#{before[2]}" unless before.blank?
         before = l.match(/# (\w*):-*(\w*)-*<:(\w*)/)
-        l.gsub(/^\s*$|t.timestamps|.*_id.*|.*paper.*|t\.|accepts_.*|, dep.*|^\s*$|"|:|,|#.*/,'')
-      }).reject(&:blank?).map(&:split)
+        l.gsub(/^\s*$|t.timestamps|authorstamps|.* scope .*|.*paper.*|t\.|accepts_.*|, dep.*|^\s*$|"|:|,|#.*/,'')
+      }
+      (lines*="\n").scan(/belongs_to (\w*)/).each {|w| while lines =~ /.*#{w[0]}_id/; lines[/.*#{w[0]}_id/] = ''; end }
+      lines.lines.reject(&:blank?).map(&:split)
     end
 
   end
