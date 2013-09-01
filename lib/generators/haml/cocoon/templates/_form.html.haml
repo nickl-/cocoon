@@ -1,23 +1,22 @@
-= simple_form_for(@<%= singular_name %>, :html => { :class => 'form-horizontal center' }) do |f|
+= simple_form_for(@<%= singular_name %>, html: { class: 'form-horizontal' }) do |f|
 
   = f.error_notification
 
   %section[@<%= singular_name %>]
     .panel.panel-default
       .panel-heading
-<% belongs_to.each do |name, ref|-%>
-      = f.association :<%= ref.name %>, (respond_to?('select_edit') ? send('select_edit',
-          @<%= name %>.<%= ref.name %>, {has_one: <%= ref.has_one? %>, column: @<%= name %>.class.columns_hash['<%= ref.name %>']}) : {})
-<% end %>
         %b= t '.<%= singular_name %>', default: '<%= title_name %>'
       .panel-body
+<% belongs_to.each do |name, attribute|-%>
+        - @<%= singular_name %>.build_<%= attribute.name %>
+        = f.association :<%= attribute.name %>, custom_edit(@<%= singular_name %>, '<%= attribute.name %>')
+<% end -%>
 <% self_attributes.each do |name, attribute| -%>
-      = f.input :<%= attribute.name %>, (respond_to?('<%= attribute.type %>_edit') ? send('<%= attribute.type %>_edit',
-       @<%= singular_name %>.<%= attribute.name %>, {has_one: <%= attribute.has_one? %>, column: @<%= singular_name %>.class.columns_hash['<%= attribute.name %>']}) : {})
+        = f.input :<%= attribute.name %>, custom_edit(@<%= singular_name %>, '<%= attribute.name %>')
 <% end -%>
       %br
 <% references.each do |name, ref|-%>
-      = render 'nests', f: f, nested: '<%= name %>', has_one: <%= ref.has_one? %>
+        = render 'nests', f: f, nested: '<%= name %>', has_one: <%= ref.has_one? %>
 <% end -%>
 
       .panel-footer

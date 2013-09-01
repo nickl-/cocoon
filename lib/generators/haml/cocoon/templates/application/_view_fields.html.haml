@@ -6,8 +6,5 @@
       - else if name[/(\w*)_id$/]
         - if item.respond_to? $1
           - value = item.send($1).name
-      - if defined? value
-        %dd!= respond_to?("#{attribute.type}_view") |
-          ? send("#{attribute.type}_view", value, attribute) |
-          : (value.blank? ? '&nbsp;' : value) |
       %dt= t ".#{name}", default: "#{name}".titleize
+      %dd!= custom_view item, name

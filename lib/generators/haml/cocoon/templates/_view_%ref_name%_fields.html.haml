@@ -1,8 +1,8 @@
 %section[item]
   %dl.dl-horizontal
 <% (ref_belongs_to.merge ref_attributes).each do |name, attribute| -%>
-    %dd= inline_input @<%= singular_name %>, "#{locals[:has_one] ? locals[:nested] : locals[:nested].pluralize}.<%= attribute.name %>"
     %dt= t '.<%= attribute.name %>', default: '<%= attribute.name.titleize %>'
+    %dd= custom_view item, '<%= attribute.name %>'
 <% end -%>
 <% ref_references.each do |name, att| -%>
 = render 'view_nests', f: item.<%= att.name %>, nested: '<%= name %>', has_one: <%= att.has_one? %>
