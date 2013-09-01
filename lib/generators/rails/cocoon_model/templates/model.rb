@@ -7,6 +7,10 @@ class <%= class_name %> < <%= parent_class_name.classify %>
   has_secure_password
 <% end -%>
 
+<% scope_attributes.each do |name| -%>
+  scope :by_<%= name %>, lambda {|ref| where <%= name %>: ref }
+<% end -%>
+
   has_paper_trail
 end
 <% end -%>

@@ -15,6 +15,10 @@ module Rails
       end
 
       protected
+      def by_attributes
+        SchemaAttributes.parse(singular_name).accessible.values.map {|v| ":by_#{v.name}"} *', '
+      end
+
       def strong_parameters
         say_status :insert, 'injecting strong parameters', :blue
         recurse_references singular_name, '  '

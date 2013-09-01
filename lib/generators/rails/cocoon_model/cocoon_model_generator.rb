@@ -60,7 +60,11 @@ module Rails
       end
 
       def attributes_names
-        [:id] + attributes.select { |attr| !attr.reference? }.map { |a| a.name.to_sym }
+        [:id] + attributes.select {|attr| !attr.reference? }.map {|a| a.name.to_sym }
+      end
+
+      def scope_attributes
+        SchemaAttributes.parse(singular_name).accessible.values.map {|v| v.name.to_s }
       end
 
       def inject_relationship(assoc, ref, model)
