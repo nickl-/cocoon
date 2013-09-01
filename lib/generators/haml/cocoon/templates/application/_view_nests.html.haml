@@ -1,6 +1,6 @@
 %div.nested-group{id: nested.pluralize.dasherize}
   - unless f.blank?
-    .panel
+    .panel.panel-default
       .panel-heading
         - if has_one
           %b= t ".#{nested}", default: "#{nested.titleize}"

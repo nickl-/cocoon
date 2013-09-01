@@ -10,16 +10,17 @@
         = notice
 
     %section[@<%= singular_name %>]
-      .panel
+      .panel.panel-default
         .panel-heading
-        %dl.dl-horizontal
           %b= t '.<%= singular_name %>', default: '<%= title_name %>'
+        .panel-body
+          %dl.dl-horizontal
 <% (belongs_to.merge self_attributes).each do |name, attribute| -%>
           %dd= inline_input @<%= singular_name %>, '<%= attribute.name %>'
             %dt= t '.<%= attribute.name %>', default: '<%= attribute.name.titleize %>'
 <% end -%>
 <% references.each do |name, ref|-%>
-        = render 'view_nests', f: @<%= singular_name %>.<%= ref.name %>, nested: '<%= name %>', has_one: <%= ref.has_one? %>
+          = render 'view_nests', f: @<%= singular_name %>.<%= ref.name %>, nested: '<%= name %>', has_one: <%= ref.has_one? %>
 <% end -%>
 
   = render 'sidebar_sections'
