@@ -30,7 +30,7 @@ module Haml
         %w(_view_nests _view_fields _nests _sidebar_sections).each { |tpl|
           copy_file "application/#{tpl}.html.haml", "app/views/application/#{tpl}.html.haml"
         }
-        %w(index edit new show)
+        %w(index edit new show _sub_navigation)
       end
 
       def references
@@ -40,7 +40,6 @@ module Haml
       def belongs_to
         @belongs_to ||= SchemaAttributes.parse(singular_name).belongs_to
       end
-
 
       def convert_encoded_instructions(filename)
         filename.gsub(/%(.*?)%/) do |initial_string|

@@ -1,11 +1,6 @@
 .row
   .col-10
-    .subnav
-      %ul.nav.nav-pills
-        %li.active= link_to t('.new_<%= title_name %>'), new_<%= singular_table_name %>_path
-        %li= link_to t('.all_<%= plural_title_name %>'), <%= plural_table_name %>_path
-        %li.disabled= link_to t('.edit_this_<%= title_name %>'), '#'
-        %li.disabled= link_to t('.show_this_<%= title_name %>'), '#'
+    = render 'sub_navigation', page: 'new'
 
     %h1= t '.new_<%= title_name %>'
 
