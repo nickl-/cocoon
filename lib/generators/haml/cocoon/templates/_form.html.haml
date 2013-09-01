@@ -5,11 +5,11 @@
   %section[@<%= singular_name %>]
     .panel
       .panel-heading
-        %b= t '.<%= title_name %>'
 <% belongs_to.each do |name, ref|-%>
       = f.association :<%= ref.name %>, (respond_to?('select_edit') ? send('select_edit',
           @<%= name %>.<%= ref.name %>, {has_one: <%= ref.has_one? %>, column: @<%= name %>.class.columns_hash['<%= ref.name %>']}) : {})
 <% end %>
+        %b= t '.<%= singular_name %>', default: '<%= title_name %>'
 <% self_attributes.each do |name, attribute| -%>
       = f.input :<%= attribute.name %>, (respond_to?('<%= attribute.type %>_edit') ? send('<%= attribute.type %>_edit',
        @<%= singular_name %>.<%= attribute.name %>, {has_one: <%= attribute.has_one? %>, column: @<%= singular_name %>.class.columns_hash['<%= attribute.name %>']}) : {})

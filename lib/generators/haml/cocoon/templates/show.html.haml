@@ -2,7 +2,7 @@
   .col-10
     = render 'sub_navigation', page: 'show'
 
-    %h1= t '.show_<%= title_name %>'
+    %h1= t '.show_<%= singular_name %>', default: 'Show <%= title_name %>'
 
     - unless notice.blank?
       .alert.alert-success
@@ -12,8 +12,8 @@
     %section[@<%= singular_name %>]
       .panel
         .panel-heading
-          %b= t '.<%= title_name %>'
         %dl.dl-horizontal
+          %b= t '.<%= singular_name %>', default: '<%= title_name %>'
 <% (belongs_to.merge self_attributes).each do |name, attribute| -%>
           %dt= t '.<%= attribute.name %>'
           %dd= inline_input @<%= singular_name %>, '<%= attribute.name %>'

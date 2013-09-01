@@ -2,7 +2,7 @@
   .col-12
     = render 'sub_navigation', page: 'all'
 
-    %h1= t '.all_<%= plural_name %>'
+    %h1= t('.all_<%= plural_name %>', default: '<%= plural_title_name %>')
 
     %table{class: 'table table-condensed table-striped'}
       %tr

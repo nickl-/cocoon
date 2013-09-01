@@ -2,7 +2,7 @@
   .col-10
     = render 'sub_navigation', page: 'new'
 
-    %h1= t '.new_<%= title_name %>'
+    %h1= t '.new_<%= singular_name %>', default: 'New <%= title_name %>'
 
     = render 'form'
 

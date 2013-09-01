@@ -73,11 +73,11 @@ module Haml
       end
 
       def title_name
-        @title_name ||= singular_name
+        @title_name ||= singular_name.titleize
       end
 
       def plural_title_name
-        @plural_title_name ||= plural_name
+        @plural_title_name ||= plural_name.titleize
       end
 
     end
