@@ -1,5 +1,3 @@
-require 'rails/generators'
-require 'rails/generators/generated_attribute'
 require 'schema_attributes'
 require 'rails/generators/active_record/model/model_generator'
 require 'active_record/base'
@@ -7,61 +5,6 @@ require 'active_record/base'
 module Rails
   module Generators
     hide_namespace 'cocoon_model'
-
-
-    class GeneratedAttribute
-      alias _initialize initialize
-      def initialize(name, type=nil, index_type=false, attr_options={})
-        _initialize(name, type, index_type, attr_options)
-        relationship index_type
-      end
-
-      def relationship rel=nil
-        @relationship = rel.to_sym if %w(has_many has_one).include?(rel)
-        @relationship ||= default_relationship
-      end
-
-      def default_relationship
-        :has_many if reference?
-      end
-
-      def references?
-        %w(references).include?(type)
-      end
-
-      def belongs_to?
-        %w(belongs_to).include?(type)
-      end
-
-      def titleize
-        name.titleize
-      end
-
-      def title_single
-        singular_name.titleize
-      end
-
-      def title_plural
-        plural_name.titleize
-      end
-
-      def singular_name
-        return name unless has_many?
-        name.singleize
-      end
-
-      def plural_name
-        name.pluralize
-      end
-
-      def has_many?
-        relationship == :has_many
-      end
-
-      def has_one?
-        relationship == :has_one
-      end
-    end
 
     class CocoonModelGenerator < ActiveRecord::Generators::ModelGenerator
       # TODO: include both paths and remove the migration.rb model.rb and

@@ -1,4 +1,64 @@
-require 'generators/rails/cocoon_model/cocoon_model_generator'
+require 'rails/generators'
+require 'rails/generators/generated_attribute'
+
+module Rails
+  module Generators
+    class GeneratedAttribute
+      alias _initialize initialize
+      def initialize(name, type=nil, index_type=false, attr_options={})
+        _initialize(name, type, index_type, attr_options)
+        relationship index_type
+      end
+
+      def relationship rel=nil
+        @relationship = rel.to_sym if %w(has_many has_one).include?(rel)
+        @relationship ||= default_relationship
+      end
+
+      def default_relationship
+        :has_many if reference?
+      end
+
+      def references?
+        %w(references).include?(type)
+      end
+
+      def belongs_to?
+        %w(belongs_to).include?(type)
+      end
+
+      def titleize
+        name.titleize
+      end
+
+      def title_single
+        singular_name.titleize
+      end
+
+      def title_plural
+        plural_name.titleize
+      end
+
+      def singular_name
+        return name unless has_many?
+        name.singleize
+      end
+
+      def plural_name
+        name.pluralize
+      end
+
+      def has_many?
+        relationship == :has_many
+      end
+
+      def has_one?
+        relationship == :has_one
+      end
+    end
+  end
+end
+
 class SchemaAttributes < Hash
   attr_accessor :model
   @@path = nil
