@@ -24,9 +24,10 @@ class <%= controller_class_name %>Controller < InheritedResources::Base
   end
 
   def build_resource_params
-    [params.require(:<%= singular_name %>).permit(
+    return [] unless params[key = :<%= singular_name %>].present? || params[key = :<%= singular_table_name %>].present?
+    [params.require(key).permit(
       [:_destroy, :id<%= permissible_attributes.blank? ? '' : ", #{permissible_attributes}" %><%= strong_parameters %>]
-    )] if params[:<%= singular_name %>].present?
+    )]
   end
 
 end
