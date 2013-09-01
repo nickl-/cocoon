@@ -6,10 +6,9 @@
       - else
         %b= t ".#{nested.pluralize}"
     - if has_one
+      - f.object.send("build_#{nested}") if f.object.send(nested).nil?
       = f.simple_fields_for nested.to_sym do |item|
         = render "#{nested}_fields", f: item, locals: {nested: nested, has_one: has_one}
-      - if f.object.send(nested).nil?
-        = render_add_association f, nested.to_sym
     - else
       = f.simple_fields_for nested.pluralize.to_sym do |item|
         = render "#{nested}_fields", f: item, locals: {nested: nested, has_one: has_one}
