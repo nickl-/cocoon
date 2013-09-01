@@ -7,7 +7,7 @@
         - if item.respond_to? $1
           - value = item.send($1).name
       - if defined? value
-        %dt= t ".#{name}"
         %dd!= respond_to?("#{attribute.type}_view") |
           ? send("#{attribute.type}_view", value, attribute) |
           : (value.blank? ? '&nbsp;' : value) |
+      %dt= t ".#{name}", default: "#{name}".titleize

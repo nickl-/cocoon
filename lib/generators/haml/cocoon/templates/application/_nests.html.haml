@@ -2,9 +2,9 @@
   .panel
     .panel-heading
       - if has_one
-        %b= t ".#{nested}"
+        %b= t ".#{nested}", default: "#{nested.titleize}"
       - else
-        %b= t ".#{nested.pluralize}"
+        %b= t ".#{nested.pluralize}", default: "#{nested.pluralize.titleize}"
     - if has_one
       - f.object.send("build_#{nested}") if f.object.send(nested).nil?
       = f.simple_fields_for nested.to_sym do |item|
@@ -13,5 +13,5 @@
       = f.simple_fields_for nested.pluralize.to_sym do |item|
         = render "#{nested}_fields", f: item, locals: {nested: nested, has_one: has_one}
       .panel-footer
-        = link_to_add_association "Add #{nested.titleize}", f,
+        = link_to_add_association t(".add_#{nested}", default: "Add #{nested.titleize}"), f,
             nested.pluralize.to_sym, class: 'btn btn-default btn-mini'

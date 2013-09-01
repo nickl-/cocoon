@@ -1,6 +1,6 @@
 .col-2
   #sidebar-form-sections.well.nav.sidebar-nav
-    %h3= t '.sidebar'
+    %h3= t '.sidebar', default: 'Sidebar'
     %ul.nav.nav-list
       - if defined? links and not links.nil?
         -[*links].each do |link|
