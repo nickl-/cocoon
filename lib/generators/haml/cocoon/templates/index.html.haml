@@ -4,6 +4,7 @@
 
     %h1= t('.all_<%= plural_name %>', default: '<%= plural_title_name %>')
 
+<% unless attributes.empty? -%>
     %table#index-table.table.table-condensed.table-striped
       %thead
         %tr
@@ -30,4 +31,5 @@
               = link_to t('.edit', default: 'Edit'), edit_<%= singular_table_name %>_path(<%= singular_name %>), class: 'btn btn-success btn-mini'
               = link_to t('.destroy', default: 'Destroy'), <%= singular_name %>, data: { confirm: 'Are you sure?' }, method: :delete, class: 'btn btn-danger btn-mini'
     = paginate @<%= plural_name %>
+<% end -%>
 %br

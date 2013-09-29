@@ -7,7 +7,7 @@
       .panel-heading
         %b= t '.<%= singular_name %>', default: '<%= title_name %>'
       .panel-body
-<% belongs_to.each do |name, attribute|-%>
+<% belongs_to.each do |name, attribute| attribute.build -%>
         - @<%= singular_name %>.build_<%= attribute.name %>
         = f.association :<%= attribute.name %>, custom_edit(@<%= singular_name %>, '<%= attribute.name %>')
 <% end -%>
