@@ -32,9 +32,8 @@ module Rails
           ref = SchemaAttributes.parse(ref_name)
           if ref.belongs_to? singular_name
             assoc = ref.relationship singular_name
-            inject_associate(assoc, ref_name, singular_name) &&
-                inject_serialization(assoc, ref_name, singular_name)
-            assoc_ref assoc, ref_name
+            inject_associate(assoc, ref_name, singular_name)
+            inject_serialization(assoc, ref_name, singular_name)
             rref = ref[singular_name].dup
             rref.name, rref.type = ref_name, :references
             @schema_attributes.merge!({"#{ref_name}" => rref})
@@ -86,7 +85,6 @@ module Rails
 
       def assoc_ref assoc, ref
         ref = ref.pluralize unless assoc =~ /one/
-        #ref[/.*/] = ref.pluralize unless assoc =~ /one/
         "#{assoc} :#{ref}"
       end
 
