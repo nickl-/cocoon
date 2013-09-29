@@ -50,6 +50,7 @@ module Rails
           inject_serialization assoc, singular_name, name if
               is_file? serializer_file name
         end
+        say_status :invoke, 'parent_association complete', :white
       end
 
       protected
