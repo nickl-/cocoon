@@ -81,7 +81,11 @@ module Rails
 
       def inject_serialization(assoc, ref, model)
         create_serializer model unless is_file? serializer_file model
-        inject_file( assoc_ref(assoc, ref), serializer_file(model))
+        ref = ref.pluralize unless assoc =~ /one/
+        source  = File.expand_path(find_in_source_paths('_serializer_association.rb'))
+        context = instance_eval('binding')
+        content = ERB.new(::File.binread(source), nil, '-', '@output_buffer').result(context)
+        inject_file(content, serializer_file(model))
       end
 
       def assoc_ref assoc, ref
