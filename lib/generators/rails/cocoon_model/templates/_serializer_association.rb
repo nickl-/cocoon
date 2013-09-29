@@ -1,1 +1,1 @@
-<%= assoc %> :<%= ref %><%= ref =~ /_/ ? ", key: #{ref.camelize(:lower)}" : '' %>
+<%= assoc -%> :<%= ref -%><%= ref =~ /_/ ? ", key: :#{ref.camelize(:lower)}" : '' -%>
