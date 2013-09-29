@@ -130,7 +130,7 @@ class SchemaAttributes < Hash
             File.read(f)[/(?:.*table "?#{table_name model}.*)([\s\S]*?)(?=^\s*end\s*$)/, 1]
           when 'migrate'
             File.read(f)[/(?:.*table :?#{table_name model}.*)([\s\S]*?)(?=^\s*end\s*$)/, 1]
-        end
+        end if File.exists? f
       }) * '').lines
     end
 
