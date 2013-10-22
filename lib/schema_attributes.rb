@@ -147,7 +147,7 @@ class SchemaAttributes < Hash
       lines.map! {|l|
         l = "#{l.chomp}  :#{before[2]}" unless before.blank?
         before = l.match(/# (\w*):-*(\w*)-*<:(\w*)/)
-        l.gsub(/^\s*$|t.timestamps|authorstamps|.* scope .*|.*paper.*|t\.|accepts_.*|, dep.*|^\s*$|"|:|,|#.*/,'')
+        l.gsub(/^\s*$|t.timestamps|authorstamps|.* scope .*|.*paper.*|.*UploadDocument.*|t\.|accepts_.*|, dep.*|^\s*$|"|:|,|#.*/,'')
       }
       (lines*="\n").scan(/belongs_to (\w*)/).each {|w| while lines =~ /.*#{w[0]}_id/; lines[/.*#{w[0]}_id/] = ''; end }
       lines.lines.reject(&:blank?).map(&:split)
