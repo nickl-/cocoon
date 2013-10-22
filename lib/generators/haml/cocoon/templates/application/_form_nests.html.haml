@@ -1,0 +1,15 @@
+.nested-group{id: nested.dasherize}
+  .panel.panel-default
+    .panel-heading
+      %b= t ".#{nested}", default: "#{nested.titleize} details"
+    .panel-body
+      = build_nested_form_fields(f, ref_chain) do |bf|
+        = render "#{nested}_fields", f: bf, locals: { nested: nested, has_one: has_one }
+    - unless has_one
+      .panel-footer
+        - unless f.object.respond_to? ref_chain[/\.?([^\.]*)$/]
+          - ref_chain[/\.?([^\.]*)$/] = '' if ref_chain =~ /[^\.]*$/ && ref_chain =~ /\./
+          - build_nested_form_fields(f, ref_chain) do |nf|
+            - f = nf;
+        = link_to_add_association t(".add_#{nested}", default: "Add #{nested.titleize}"), f,
+              nested.pluralize.to_sym, class: 'btn btn-default btn-mini'

@@ -1,9 +1,8 @@
 .row
-  .col-10
+  .col-md-12
     = render 'sub_navigation', page: 'new'
 
     %h1= t '.new_<%= singular_name %>', default: 'New <%= title_name %>'
 
-    = render 'form'
+= render 'form_layout', item: @<%= singular_name %>
 
-  = render 'sidebar_sections'

@@ -1,8 +1,0 @@
-.subnav
-  %ul.nav.nav-pills
-    %li{class: "#{'active' if page == 'new'}"}= link_to t('.new_<%= singular_name %>', default: 'New <%= title_name %>'), new_<%= singular_table_name %>_path
-    %li{class: "#{'active' if page == 'all'}"}= link_to t('.all_<%= plural_name %>', default: 'All <%= plural_title_name %>'), <%= plural_table_name %>_path
-    %li{class: "#{'active' if page == 'edit'}#{'disabled' if %w(new all).include?(page)}"}= link_to t('.edit_this_<%= singular_name %>',
-      default: 'Edit This <%= title_name %>'), (%w(new all).include?(page) ? '#' : edit_<%= singular_table_name %>_path(@<%= singular_name %>))
-    %li{class: "#{'active' if page == 'show'}#{'disabled' if %w(new all).include?(page)}"}= link_to t('.show_this_<%= singular_name %>',
-      default: 'Show This <%= title_name %>'), (%w(new all).include?(page) ? '#' : @<%= singular_name %>)

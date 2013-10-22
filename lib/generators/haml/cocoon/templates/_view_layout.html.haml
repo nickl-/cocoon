@@ -1,0 +1,7 @@
+= show_for item do |f|
+  .container.well
+    .row
+      .col-md-6= render 'view_nests', f: f, nested: '<%= singular_name %>', ref_chain: '', has_one: true
+<% references.each do |name, att|-%>
+      .col-md-6= render 'view_nests', f: f, nested: '<%= name %>', ref_chain: '<%= "#{att.name}" %>', has_one: <%= att.has_one? %>
+<% end -%>

@@ -1,0 +1,11 @@
+class <%= habtm_migration_class_name %> < ActiveRecord::Migration
+  def change
+    create_table :<%= habtm_table_name %>, :id => false, :force => true do |t|
+      t.references :<%= habtm_references.join(', :') %>
+    end
+
+#    add_index :<%= habtm_table_name %>, <%=habtm_id_columns.join(',') %>
+#      name: "<%=habtm_table_name%>_index",
+#      unique: true
+  end
+end

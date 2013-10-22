@@ -1,26 +1,7 @@
 .row
-  .col-10
+  .col-md-12
     = render 'sub_navigation', page: 'show'
 
     %h1= t '.show_<%= singular_name %>', default: 'Show <%= title_name %>'
 
-    - unless notice.blank?
-      .alert.alert-success
-        %button.close{title: t('.close_notification', default: 'Close Notification'), data: {dismiss: 'alert'}} ✖
-        = notice
-
-    %section[@<%= singular_name %>]
-      .panel.panel-default
-        .panel-heading
-          %b= t '.<%= singular_name %>', default: '<%= title_name %>'
-        .panel-body
-          %dl.dl-horizontal
-<% (belongs_to.merge self_attributes).each do |name, attribute| -%>
-            %dt= t '.<%= attribute.name %>', default: '<%= attribute.name.titleize %>'
-            %dd= custom_inline @<%= singular_name %>, '<%= attribute.name %>'
-<% end -%>
-<% references.each do |name, ref|-%>
-          = render 'view_nests', f: @<%= singular_name %>.<%= ref.name %>, nested: '<%= name %>', has_one: <%= ref.has_one? %>
-<% end -%>
-
-  = render 'sidebar_sections'
+= render 'view_layout', item: @<%= singular_name %>

@@ -1,0 +1,4 @@
+%section[f.object]
+<% (belongs_to.merge self_attributes).each do |name, attribute| -%>
+  = f.<%= attribute.reference? ? :association : :attribute %> :<%= attribute.name %>, value: custom_view(f.object, 'payload')
+<% end -%>

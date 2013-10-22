@@ -1,0 +1,8 @@
+%section[f.object]
+<% belongs_to.each do |name, attribute| -%>
+  - f.object.build_<%= attribute.name %>
+  = f.association :<%= attribute.name %>, custom_edit(f.object, '<%= attribute.name %>')
+<% end -%>
+<% self_attributes.each do |name, attribute| -%>
+  = f.input :<%= attribute.name %>, custom_edit(f.object, '<%= attribute.name %>')
+<% end -%>

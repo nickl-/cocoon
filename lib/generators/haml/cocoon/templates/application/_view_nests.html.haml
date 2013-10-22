@@ -1,14 +1,11 @@
 %div.nested-group{id: nested.pluralize.dasherize}
-  - unless f.blank?
-    .panel.panel-default
-      .panel-heading
-        - if has_one
-          %b= t ".#{nested}", default: "#{nested.titleize}"
-        - else
-          %b= t ".#{nested.pluralize}", default: "#{nested.pluralize.titleize}"
-      - if has_one
-        = render "view_#{nested}_fields", item: f, locals: {nested: nested, has_one: has_one}
-      - else
-        - f.each do |item|
-          = render "view_#{nested}_fields", item: item, locals: {nested: nested, has_one: has_one}
-        %hr
+  .panel.panel-default
+    .panel-heading
+      %b= t ".#{nested}", default: "#{nested.titleize} details"
+    .panel-body
+      - if !ref_chain.empty? && ref_chain !~ /\./ && !!(item = instance_variable_get("@#{ref_chain}"))
+        = show_for item do |f|
+          = render "view_#{nested}_fields", f: f, locals: {nested: nested, has_one: has_one}
+      -else
+        - build_nested_view_fields(f, ref_chain) do |f|
+          = render "view_#{nested}_fields", f: f, locals: {nested: nested, has_one: has_one}

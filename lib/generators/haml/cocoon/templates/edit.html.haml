@@ -1,9 +1,7 @@
 .row
-  .col-10
+  .col-md-12
     = render 'sub_navigation', page: 'edit'
 
     %h1= t '.editing_<%= singular_name %>', default: 'Editing <%= title_name %>'
 
-    = render 'form'
-
-  = render 'sidebar_sections'
+= render 'form_layout', item: @<%= singular_name %>

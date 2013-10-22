@@ -1,0 +1,12 @@
+= simple_form_for(item,
+    url: resource.new_record? ? collection_url : resource_url,
+    method: resource.new_record? ? :post : :put,
+    html: { class: 'form-horizontal' }) do |f|
+  .container.well
+    .row
+      .col-md-12= f.error_notification
+    .row
+      .col-md-6= render 'form_nests', f: f, nested: '<%= singular_name %>', ref_chain: '', has_one: true
+<% references.each do |name, att|-%>
+      .col-md-6= render 'form_nests', f: f, nested: '<%= name %>', ref_chain: '<%= att.name %>', has_one: <%= att.has_one? %>
+<% end -%>

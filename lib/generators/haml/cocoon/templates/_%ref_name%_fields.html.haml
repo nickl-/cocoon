@@ -1,20 +1,20 @@
-- if f.is_a? Hash
-  - f = f[:builder]
-  - has_one = true
-- else
-  - has_one = false
-.panel-body.nested-fields[f.object]
+- has_one = !!(defined?(locals) && locals[:has_one])
+.nested-fields[f.object]
   - unless has_one
     = link_to_remove_association '✖', f,
-      class: 'close', title: t('.destroy_<%= ref_name %>', default: 'Destroy <%= ref_name.titleize %>'),
-      data: {confirm: t('.confirm', default: 'Are you sure you want to destroy this entity and all its children.')}
-<% ref_belongs_to.each do |name, attribute|-%>
-  = f.association :<%= attribute.name %>, custom_edit(f.object, '<%= attribute.name %>')
+        class: 'close', title: t('.destroy_<%= ref_name %>',
+        default: 'Destroy <%= ref_name.titleize %>'),
+        data: {confirm: t('.confirm', default: 'Are you sure?')}
+  - unless controller.action_name == 'new'
+    = f.input :id, custom_edit(f.object, 'id')
+<% ref_belongs_to.each do |name, att| -%>
+  = f.association :<%= att.name %>, custom_edit(f.object, '<%= att.name %>')
 <% end -%>
-<% ref_attributes.each do |name, attribute| -%>
-  = f.input :<%= attribute.name %>, custom_edit(f.object, '<%= attribute.name %>')
+<% ref_attributes.each do |name, att| -%>
+  = f.input :<%= att.name %>, custom_edit(f.object, '<%= att.name %>')
+<% end -%>
+  - unless controller.action_name == 'new'
+<% ref_hidden_attributes.each do |name, att| next if name == 'id'; -%>
+    = f.input :<%= att.name %>, custom_edit(f.object, '<%= att.name %>')
 <% end -%>
   %hr
-<% ref_references.each do |name, attribute| -%>
-  = render 'nests', f: f, nested: '<%= name %>', has_one: <%= attribute.has_one? %>
-<% end -%>

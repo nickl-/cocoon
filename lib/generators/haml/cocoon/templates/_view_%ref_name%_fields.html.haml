@@ -1,9 +1,4 @@
-%section[item]
-  %dl.dl-horizontal
-<% (ref_belongs_to.merge ref_attributes).each do |name, attribute| -%>
-    %dt= t '.<%= attribute.name %>', default: '<%= attribute.name.titleize %>'
-    %dd= custom_view item, '<%= attribute.name %>'
-<% end -%>
-<% ref_references.each do |name, att| -%>
-= render 'view_nests', f: item.<%= att.name %>, nested: '<%= name %>', has_one: <%= att.has_one? %>
+%section[f.object]
+<% (ref_belongs_to.merge(ref_attributes).merge(ref_hidden_attributes)).each do |name, att| -%>
+  = f.<%= att.reference? ? :association : :attribute %> :<%= att.name %>, value: custom_view(f.object, '<%= att.name %>')
 <% end -%>

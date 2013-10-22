@@ -1,0 +1,25 @@
+<% unless grid_attributes.empty? -%>
+%table#<%= ref_name %>-table.table.table-condensed.table-striped
+  %thead
+    %tr
+<% col_count = 0 -%>
+<%   for attribute in grid_attributes -%>
+<%     if attribute.respond_to?(:type) &&  attribute.type != :text -%>
+      %th{data: {type: '<%= attribute.type %>'}}= t('.<%= attribute.name %>', default: '<%= attribute.name.titleize %>')
+<%       col_count += 1 -%>
+<%     end -%>
+<%   end -%>
+    %tr
+      %td{colspan: <%= col_count %> } &nbsp;
+    - if list.empty?
+      %tr
+        %td{colspan: <%= col_count %> }= t '.no_data', default: 'No data currently available.'
+  %tbody
+    - list.each do |item|
+      %tr
+<%   for attribute in grid_attributes -%>
+<%     if attribute.respond_to?(:type) &&  attribute.type != :text -%>
+        %td= custom_view item, '<%= attribute.name %>'
+<%     end -%>
+<%   end -%>
+<% end -%>
