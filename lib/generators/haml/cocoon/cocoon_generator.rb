@@ -24,6 +24,19 @@ module Haml
 
       source_root File.expand_path("../templates", __FILE__)
 
+      def recurse_nests
+        unless defined? @ref_name
+          @ref_name = [singular_name]
+          template_encoded_instructions "_view_%ref_name%_fields.html.haml"
+          template_encoded_instructions "_%ref_name%_fields.html.haml"
+          template_encoded_instructions "_grid_%singular_name%_fields.html.haml"
+          @ref_name = []
+          recurse singular_name
+        end
+        content = parse_erb_template '_form_actions_helper.erb', instance_eval('binding')
+        append_to_file app_views_file_path('_form_layout.html.haml'), content
+      end
+
       protected
 
       def recurse ref
@@ -32,11 +45,13 @@ module Haml
             ref_chain << ref.name
             (@ref_name ||= []) << name.to_s
             src = "_view_%ref_name%_fields.html.haml"
-            dst = convert_encoded_instructions(
-                "app/views/#{SchemaAttributes.path}#{plural_name}/_view_%ref_name%_fields.html.haml"
-            )
-            template src, dst
+            dst = template_encoded_instructions src
             template src.gsub(/_view/, ''), dst.gsub(/_view/, '')
+            template(src.gsub(/_view/, '_grid'), dst.gsub(/_view/, '_grid')) unless ref.has_one?
+            content = parse_erb_template '_form_layout_helper.erb', instance_eval('binding')
+            append_to_file app_views_file_path('_form_layout.html.haml'), content
+            content = parse_erb_template '_view_layout_helper.erb', instance_eval('binding')
+            append_to_file app_views_file_path('_view_layout.html.haml'), content
             recurse(ref_name)
             ref_chain.pop
           end
@@ -44,11 +59,11 @@ module Haml
       end
 
       def available_views
-        recurse singular_name unless defined? @ref_name
-        %w(_view_nests _view_fields _nests _sidebar_sections).each { |tpl|
-          copy_file "application/#{tpl}.html.haml", "app/views/application/#{tpl}.html.haml"
+        %w(_view_nests _view_fields _form_nests _sidebar_sections _form_actions _sub_navigation).each { |tpl|
+          copy_file "application/#{tpl}.html.haml", "app/views/application/#{tpl}.html.haml" unless
+              File.exists? "app/views/application/#{tpl}.html.haml"
         }
-        %w(index edit new show _sub_navigation)
+        %w(index edit new show _view_layout _form_layout _view)
       end
 
       def references
@@ -74,10 +89,6 @@ module Haml
         SchemaAttributes.parse(ref_name).accessible
       end
 
-      def ref_has_one
-        SchemaAttributes.parse(singular_name).has_one? ref_name
-      end
-
       def ref_references
         SchemaAttributes.parse(ref_name).references
       end
@@ -86,8 +97,16 @@ module Haml
         SchemaAttributes.parse(ref_name).belongs_to.reject {|n,a| n == singular_name || @ref_name.include?(n)}
       end
 
+      def ref_hidden_attributes
+        SchemaAttributes.parse(ref_name).hidden
+      end
+
       def self_attributes
         SchemaAttributes.parse(singular_name).accessible
+      end
+
+      def grid_attributes
+        ref_attributes.values + ref_hidden_attributes.values
       end
 
       def title_name
@@ -96,6 +115,23 @@ module Haml
 
       def plural_title_name
         @plural_title_name ||= plural_name.titleize
+      end
+
+      def template_encoded_instructions tpl
+        dst = convert_encoded_instructions(app_views_file_path(tpl))
+        template tpl, dst
+        dst
+      end
+
+      def app_views_file_path file
+        "app/views/#{SchemaAttributes.path}#{plural_name}/#{file}"
+      end
+
+      def parse_erb_template template_file, bindings
+        ERB.new(
+          ::File.binread(File.expand_path(find_in_source_paths(template_file))),
+          nil, '-', '@output_buffer'
+        ).result(bindings)
       end
 
     end
