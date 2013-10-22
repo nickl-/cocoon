@@ -14,8 +14,12 @@ class <%= controller_class_name %>Controller < InheritedResources::Base
     true
   end
 
-  def xeditable?
-    true # Or something like current_user.xeditable?
+  def create
+    create! { collection_url }
+  end
+
+  def update
+    update! { collection_url }
   end
 
   protected
