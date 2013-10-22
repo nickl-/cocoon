@@ -1,3 +1,4 @@
+require 'rails/generators/migration'
 require 'schema_attributes'
 require 'rails/generators/active_record/model/model_generator'
 require 'active_record/base'
@@ -32,6 +33,10 @@ module Rails
           ref = SchemaAttributes.parse(ref_name)
           if ref.belongs_to? singular_name
             assoc = ref.relationship singular_name
+            habtm_references ref_name
+            migration_template "habtm_migration.rb.erb",
+               "db/migrate/#{habtm_migration_name}.rb" if
+                assoc == :has_and_belongs_to_many
             inject_associate(assoc, ref_name, singular_name)
             inject_serialization(assoc, ref_name, singular_name)
             rref = ref[singular_name].dup
@@ -126,6 +131,27 @@ module Rails
         injection << ", allow_destroy: true" unless assoc =~ /one/
         injection << ', update_only: true'
         inject_file injection, model
+      end
+
+      def habtm_references ref=nil
+        @habtm_ref = [ref, singular_name] unless ref.nil?
+        @habtm_ref
+      end
+
+      def habtm_id_columns
+        habtm_references.map {|v| "#{v}_id" }
+      end
+
+      def habtm_table_name
+        (class_path + habtm_references.map(&:pluralize)).join('_')
+      end
+
+      def habtm_migration_name
+        "create_#{habtm_table_name}"
+      end
+
+      def habtm_migration_class_name
+        habtm_migration_name.camelize
       end
 
     end

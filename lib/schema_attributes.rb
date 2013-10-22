@@ -6,12 +6,13 @@ module Rails
     class GeneratedAttribute
       alias _initialize initialize
       def initialize(name, type=nil, index_type=false, attr_options={})
+        index_type = type.to_s if type == :has_and_belongs_to_many
         _initialize(name, type, index_type, attr_options)
         relationship index_type
       end
 
       def relationship rel=nil
-        @relationship = rel.to_sym if %w(has_many has_one).include?(rel)
+        @relationship = rel.to_sym if %w(has_many has_one has_and_belongs_to_many).include?(rel)
         @relationship ||= default_relationship
       end
 
@@ -24,7 +25,7 @@ module Rails
       end
 
       def belongs_to?
-        %w(belongs_to).include?(type)
+        type =~ /belongs_to/
       end
 
       def titleize
@@ -50,6 +51,11 @@ module Rails
 
       def has_many?
         relationship == :has_many
+      end
+
+      def has_and_belongs_to_many?
+        relationship == :has_and_belongs_to_many ||
+            type == :has_and_belongs_to_many
       end
 
       def has_one?
@@ -113,6 +119,8 @@ class SchemaAttributes < Hash
       %w(has_one has_many).include? type and
           assoc = type and
           type = 'references'
+      %w(has_and_belongs_to_many).include? type and
+          assoc = type
 
       "#{name}:#{type}" + (assoc.blank? ? '' : ":#{assoc}")
     end
@@ -162,11 +170,18 @@ class SchemaAttributes < Hash
   end
 
   def belongs_to? ref
-    !self[ref].nil? && self[ref].type == :belongs_to
+    !self[ref].nil? && self[ref].type =~ /belongs_to/
   end
 
   def has_one? ref
     !self[ref].nil? && self[ref].relationship == :has_one
+  end
+
+  def has_and_belongs_to_many? ref
+    !self[ref].nil? && (
+      self[ref].relationship == :has_and_belongs_to_many ||
+          self[ref].type == :has_and_belongs_to_many
+    )
   end
 
   def name_for ref
