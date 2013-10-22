@@ -207,6 +207,12 @@ class SchemaAttributes < Hash
         references?(name)}
   end
 
+  def hidden
+    Hash[%w(id created_at updated_at created_by updated_by).map {|name|
+      [name, Rails::Generators::GeneratedAttribute.parse("#{name}:#{name == 'id' ? 'int' : 'datetime'}")]
+    }]
+  end
+
   def permissible
     names = ''
     belongs_to.values.each { |att| names << ":#{att.name}_id, " }
