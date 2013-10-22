@@ -34,4 +34,8 @@ class <%= controller_class_name %>Controller < InheritedResources::Base
     )]
   end
 
+  def optional_params
+    []
+  end
+  helper_method :optional_params
 end
