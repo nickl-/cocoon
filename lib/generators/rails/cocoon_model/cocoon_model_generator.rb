@@ -120,7 +120,6 @@ module Rails
           klass = "#{SchemaAttributes.path}#{model[/\w*(?=\.)/]}".camelize
           inject_into_class model, klass, verbose: false do
             "  #{ref}\n"
-            #"  #{ref}" + (only ? "\n" : ", dependent: :destroy\n")
           end
           true
         end

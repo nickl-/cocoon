@@ -7,7 +7,7 @@ class <%= controller_class_name %>Controller < InheritedResources::Base
   #protect_from_forgery  with: :exception
 
 <% if options[:singleton] -%>
-  defaults :singleton => true
+  defaults singleton: true
 <% end -%>
 
   def can? action, type
