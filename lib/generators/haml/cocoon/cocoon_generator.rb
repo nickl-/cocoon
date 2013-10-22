@@ -6,6 +6,22 @@ module Haml
   module Generators
 
     class CocoonGenerator < Haml::Generators::ScaffoldGenerator
+
+      def view_ref_chain
+        @view_ref_chain ||= []
+      end
+      def view_entity_count
+        @view_entity_count ||= 0
+        @view_entity_count += 1
+      end
+      def ref_chain
+        @view_ref_chain ||= []
+      end
+      def entity_count
+        @view_entity_count ||= 0
+        @view_entity_count += 1
+      end
+
       source_root File.expand_path("../templates", __FILE__)
 
       protected
@@ -13,6 +29,7 @@ module Haml
       def recurse ref
         SchemaAttributes.parse(ref).references.each do |name, ref|
           if ref.type == :references
+            ref_chain << ref.name
             (@ref_name ||= []) << name.to_s
             src = "_view_%ref_name%_fields.html.haml"
             dst = convert_encoded_instructions(
@@ -21,6 +38,7 @@ module Haml
             template src, dst
             template src.gsub(/_view/, ''), dst.gsub(/_view/, '')
             recurse(ref_name)
+            ref_chain.pop
           end
         end
       end
