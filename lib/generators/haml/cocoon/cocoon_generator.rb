@@ -63,7 +63,7 @@ module Haml
       end
 
       def available_views
-        %w(_view_nests _view_fields _form_nests _sidebar_sections _form_actions _sub_navigation).each { |tpl|
+        %w(_view_nests _view_fields _form_nests _grid_nests _sidebar_sections _form_actions _sub_navigation).each { |tpl|
           copy_file "application/#{tpl}.html.haml", "app/views/application/#{tpl}.html.haml" unless
               File.exists? "app/views/application/#{tpl}.html.haml"
         }
