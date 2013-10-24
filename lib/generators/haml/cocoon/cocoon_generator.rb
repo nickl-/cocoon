@@ -37,6 +37,10 @@ module Haml
         append_to_file app_views_file_path('_form_layout.html.haml'), content
       end
 
+      def clean_up_views_path
+        File.delete app_views_file_path('_form.html.haml') if File.exists? app_views_file_path('_form.html.haml')
+      end
+
       protected
 
       def recurse ref
