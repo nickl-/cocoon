@@ -1,4 +1,5 @@
 require 'cocoon/view_helpers'
+require 'cocoonase'
 
 module Cocoon
   class Engine < ::Rails::Engine
