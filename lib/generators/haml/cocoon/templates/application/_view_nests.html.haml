@@ -1,7 +1,7 @@
 %div.nested-group{id: nested.pluralize.dasherize}
   .panel.panel-default
     .panel-heading
-      %b= t ".#{nested}", default: "#{nested.titleize} details"
+      %b= t ".#{nested}", default: "#{nested.humanize} details"
     .panel-body
       - if !ref_chain.empty? && ref_chain !~ /\./ && !!(item = instance_variable_get("@#{ref_chain}"))
         = show_for item do |f|
