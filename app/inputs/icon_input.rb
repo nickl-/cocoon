@@ -1,4 +1,4 @@
-class Cocoonase::Inputs::IconInput < SimpleForm::Inputs::StringInput
+class IconInput < SimpleForm::Inputs::StringInput
   def input
     icon_append = icon_prepend = icon = input_html_options.delete(:icon)
     title = input_html_options.delete(:icon_title)

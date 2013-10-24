@@ -1,4 +1,4 @@
-class Cocoonase::Inputs::CurrencyInput < SimpleForm::Inputs::NumericInput
+class CurrencyInput < SimpleForm::Inputs::NumericInput
   def input
     input_html_options[:placeholder] ||= "0.00"
     input_html_options[:step] = 0.01

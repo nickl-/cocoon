@@ -1,4 +1,4 @@
-class Cocoonase::Inputs::PercentageInput < Cocoonase::Inputs::IconInput
+class PercentageInput < IconInput
   def input
     input_html_options[:type] = 'number'
     input_html_options[:placeholder] ||= "0.0"

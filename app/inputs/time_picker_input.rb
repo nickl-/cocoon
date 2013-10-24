@@ -1,4 +1,4 @@
-class Cocoonase::Inputs::TimePickerInput < Cocoonase::Inputs::DateTimePickerInput
+class TimePickerInput < DateTimePickerInput
   def icon_class
     'icon-time'
   end

@@ -1,4 +1,4 @@
-class Cocoonase::Inputs::EmailAddressInput < Cocoonase::Inputs::IconInput
+class EmailAddressInput < IconInput
   def input
     input_html_options[:type] = 'email'
     input_html_options[:icon] = 'icon-envelope-alt'

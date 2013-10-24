@@ -1,4 +1,4 @@
-class Cocoonase::Inputs::DatePickerInput < Cocoonase::Inputs::DateTimePickerInput
+class DatePickerInput < DateTimePickerInput
   def picker_class
     'date-picker'
   end

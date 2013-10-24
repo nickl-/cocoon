@@ -1,4 +1,4 @@
-class Cocoonase::Inputs::PhoneNumberInput < Cocoonase::Inputs::IconInput
+class PhoneNumberInput < IconInput
   def input
     (input_html_options[:data] ||={})[:mask] = '+27(99)999-9999'
     input_html_options[:data][:placeholder] = ' '

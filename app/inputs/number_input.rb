@@ -1,4 +1,4 @@
-class Cocoonase::Inputs::NumberInput < Cocoonase::Inputs::IconInput
+class NumberInput < IconInput
   def input
     input_html_options[:type] = 'number'
     input_html_options[:icon] = '&nbsp;'.html_safe

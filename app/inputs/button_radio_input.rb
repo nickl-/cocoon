@@ -1,4 +1,4 @@
-class Cocoonase::Inputs::ButtonRadioInput < SimpleForm::Inputs::CollectionRadioButtonsInput
+class ButtonRadioInput < SimpleForm::Inputs::CollectionRadioButtonsInput
   def input
     out = <<-HTML
 
