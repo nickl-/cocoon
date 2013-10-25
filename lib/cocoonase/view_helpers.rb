@@ -90,14 +90,6 @@ module Cocoonase
          icon: 'icon-hand-up', path: parent_url)) if !!defined?(parent)
     end
 
-    def active_matter
-      @matter ||= params['active-matter'].nil? ? false : Bond::Matter.find(params['active-matter'])
-    end
-
-    def active_matter_bank
-      active_matter.bank unless active_matter == false
-    end
-
     def nav_menu name
       tabs(name)[/.*tabs">(.*)<\/ul>/m,1]
     end
