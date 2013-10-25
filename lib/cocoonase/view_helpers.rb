@@ -82,7 +82,7 @@ module Cocoonase
       back_title = request.referrer[/\/(\w+)\??[^\/]*$/,1]
       back_title = request.referrer[/\/([^\/]+)\/#{back_title}/,1].singularize if back_title =~ /\d/
       content_tag('li', action_link('.go_back', default: "Back to #{back_title.humanize.downcase}",
-         icon: 'icon-hand-left', path: request.referrer))
+         icon: 'icon-hand-left', path: request.referrer)) unless back_title.nil?
     end
 
     def action_nav_up
