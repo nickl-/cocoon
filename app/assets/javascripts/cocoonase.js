@@ -7,8 +7,11 @@
             $('input[readonly="readonly"]', this).attr('disabled', 'disabled');
         });
 
-        $.expander.defaults.slicePoint    = 45;
-        $.expander.defaults.preserveWords = false;
+        $.expander.defaults.slicePoint       = 45;
+        $.expander.defaults.collapseTimer    = 20000;
+        $.expander.defaults.preserveWords    = false;
+        $.expander.defaults.expandText       = '(more)';
+        $.expander.defaults.userCollapseText = '(less)';
         $('dd.content').not('.no-expander').expander();
         $('.scaffold-table td').not('.no-expander').expander();
 
