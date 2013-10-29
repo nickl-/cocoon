@@ -1,6 +1,15 @@
 //= require cocoon
 //= require masonry-docs.min
-(function($) {
+(function($, window, document) {
+    var scroll_y_now = window.scrollY;
+    document.addEventListener("page:fetch", function () {
+        scroll_y_now = window.scrollY;
+    });
+    document.addEventListener("page:load", function () {
+        window.scrollTo(window.scrollX, scroll_y_now);
+    });
+//    document.addEventListener("page:fetch", startSpinner);
+//    document.addEventListener("page:receive", stopSpinner);
 
     $(function () {
         $('form').submit(function () {
@@ -81,4 +90,4 @@
     }
 
 
-})(jQuery);
+})(window.jQuery, window, window.document);
