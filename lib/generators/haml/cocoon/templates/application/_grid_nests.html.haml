@@ -1,6 +1,6 @@
 .nested-group{id: nested.dasherize}
   .panel.panel-default
     .panel-heading
-      %b= t ".#{nested}", default: "#{nested.pluralize.humanize}"
+      %b= t ".#{nested}", default: defined?(nests_label) ? nests_label : "#{nested.pluralize.humanize}"
     .panel-body
       = render "grid_#{nested}_fields", list: f.object.send(ref_chain)

@@ -1,7 +1,7 @@
 .nested-group{id: nested.dasherize}
   .panel.panel-default
     .panel-heading
-      %b= t ".#{nested}", default: "#{nested.humanize} details"
+      %b= t ".#{nested}", default: defined?(nests_label) ? nests_label : "#{nested.humanize} details"
     .panel-body
       = build_nested_form_fields(f, ref_chain) do |bf|
         = render "#{nested}_fields", f: bf, locals: { nested: nested, has_one: has_one }
