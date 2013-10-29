@@ -486,25 +486,5 @@ module Cocoonase
       string_edit value, meta
     end
 
-  ########################################################################################
-    def payload_url value
-      download_file_path(value.model.class.name.underscore, value.model.id)
-    end
-
-    def message_id_unique object
-      return link_to(
-          "#{'<i class="iconic-arrow-down"></i>'} (#{object.message_type_id}) IN".html_safe,
-          "/#{object.bank.downcase}/mt#{object.message_type_id}/#{object.bank == 'SBSA' ? 'xmls' : [27,17].include?(object.message_type_id) ? 'bonds' : 'messages'}/#{object.message_id}"
-      ) unless object.message_id.nil? || object.acknowledge_id.nil?
-      "#{'<i class="iconic-arrow-down"></i>'} (#{object.message_type_id}) <small>PENDING ACK</small>".html_safe
-    end
-
-    def acknowledge_id_unique object
-      return link_to(
-          "#{'<i class="iconic-arrow-up"></i>'} (#{object.acknowledge_type_id}) OUT".html_safe,
-          "/#{object.bank.downcase}/mt#{object.acknowledge_type_id}/#{object.bank == 'SBSA' ? 'xmls' : 'messages'}/#{object.acknowledge_id}"
-      ) unless object.acknowledge_id.nil?
-      "#{'<i class="iconic-arrow-up"></i>'} (#{object.acknowledge_type_id}) <small>PENDING ACK</small>".html_safe
-    end
   end
 end
