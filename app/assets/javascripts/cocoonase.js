@@ -1,6 +1,7 @@
 //= require cocoon
 //= require masonry-docs.min
 (function($, window, document) {
+
     var scroll_y_now = window.scrollY;
     document.addEventListener("page:fetch", function () {
         scroll_y_now = window.scrollY;
@@ -11,16 +12,41 @@
 //    document.addEventListener("page:fetch", startSpinner);
 //    document.addEventListener("page:receive", stopSpinner);
 
+    function sort_select2(results, container, query) {
+        if (query.term)
+            // use the built in javascript sort function
+            return results.sort(function(a, b) {
+                if (a.text.length > b.text.length)
+                    return 1;
+                else if (a.text.length < b.text.length)
+                    return -1;
+                else
+                    return 0;
+            });
+       else
+             return results.sort(function(a, b) {
+                 if (a.children)
+                    sort_select2(a.children, container, query);
+                if (b.children)
+                    sort_select2(b.children, container, query);
+                return a.text > b.text ? 1 : a.text < b.text ? -1 : 0;
+            });
+       return results;
+    }
+
+    $.fn.select2.defaults.sortResults    = sort_select2;
+    $.fn.select2.defaults.placeholder    = 'Choose from the list.';
+    $.expander.defaults.slicePoint       = 45;
+    $.expander.defaults.collapseTimer    = 20000;
+    $.expander.defaults.preserveWords    = false;
+    $.expander.defaults.expandText       = '(more)';
+    $.expander.defaults.userCollapseText = '(less)';
+
     $(function () {
         $('form').submit(function () {
             $('input[readonly="readonly"]', this).attr('disabled', 'disabled');
         });
 
-        $.expander.defaults.slicePoint       = 45;
-        $.expander.defaults.collapseTimer    = 20000;
-        $.expander.defaults.preserveWords    = false;
-        $.expander.defaults.expandText       = '(more)';
-        $.expander.defaults.userCollapseText = '(less)';
         $('dd.content').not('.no-expander').expander();
         $('.scaffold-table td').not('.no-expander').expander();
 
