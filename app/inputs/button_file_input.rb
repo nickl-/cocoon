@@ -1,4 +1,4 @@
-class Cocoonase::Inputs::ButtonFileInput < SimpleForm::Inputs::FileInput
+class ButtonFileInput < SimpleForm::Inputs::FileInput
   include ApplicationHelper
   include ActionView::Helpers::AssetTagHelper
 
