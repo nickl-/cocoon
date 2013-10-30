@@ -29,6 +29,11 @@
             });
        else
              return results.sort(function(a, b) {
+                 if (a.text.match(/hour|day|minute/))
+                    return 0;
+                 if (((amatch = a.text.match(/(\d+)$/)) && (bmatch = b.text.match(/(\d+)$/)) && a.text.replace(/\d+$/,'') == b.text.replace(/\d+$/,'')) ||
+                     ((amatch = a.text.match(/^(\d+)/)) && (bmatch = b.text.match(/^(\d+)/))))
+                    return amatch[1] != bmatch[1] || a.text.replace(/^\d+/,'') == b.text.replace(/^\d+/,'') ? amatch[1]-bmatch[1] : a.text.replace(/^\d+/,'') > b.text.replace(/^\d+/,'') ? 1 : -1;
                  if (a.children)
                     sort_select2(a.children, container, query);
                 if (b.children)
