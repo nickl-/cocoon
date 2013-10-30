@@ -478,6 +478,10 @@ module Cocoonase
       string_edit value, meta
     end
 
+    def text_edit value, meta
+      string_edit value, meta
+    end
+
     def integer_edit value, meta
       string_edit value, meta
     end
