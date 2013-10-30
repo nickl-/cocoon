@@ -118,7 +118,7 @@
             disableFocus: true
         }).find('input:first').removeAttr('size');
 
-        $('textarea:not([name*="address"])').each(function () {
+        $('textarea').not('.no-wysihtml5').each(function () {
             if ($(this).css('display') != 'none')
                 $(this).addClass('editor').attr('rows', 5).wysihtml5();
         });
