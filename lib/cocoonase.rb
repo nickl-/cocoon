@@ -21,6 +21,9 @@ module Cocoonase
         #config.action_view.javascript_expansions[:masonry_docs] = %w(masonry-docs.min)
         config.action_view.javascript_expansions[:cocoonase] = %w(cocoonase)
       end
+      #if config.action_view.stylesheet_expansions
+      #  config.action_view.stylesheet_expansions = %w(cocoonase)
+      #end
     end
 
     # configure our plugin on boot
