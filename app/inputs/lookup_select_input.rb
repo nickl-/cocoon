@@ -1,9 +1,6 @@
 class LookupSelectInput < SimpleForm::Inputs::Base
 
   def input
-    Rails.logger.info '-------------------------------------'
-    Rails.logger.info input_html_options
-    Rails.logger.info '-------------------------------------'
     list_url = input_html_options.delete(:list_url)
     input_field = @builder.hidden_field(attribute_name, input_html_options)
     input_id = input_field[/ id="(\w*)/, 1]
