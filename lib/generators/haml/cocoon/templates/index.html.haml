@@ -1,8 +1,7 @@
 .row
   .col-md-12
-    = render 'sub_navigation', page: 'all'
-
     %h1= t('.all_<%= plural_name %>', default: '<%= plural_title_name %>')
+    = render 'sub_navigation', page: 'all'
 
 .row
   .col-md-12
