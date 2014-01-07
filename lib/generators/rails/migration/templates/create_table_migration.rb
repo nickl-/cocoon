@@ -9,7 +9,7 @@ class <%= migration_class_name %> < ActiveRecord::Migration
 <% end -%>
 <% end -%>
       t.timestamps
-      t.authorstamps
+      #t.authorstamps
     end
 <% attributes_with_index.each do |attribute| -%>
     add_index :<%= table_name %>, :<%= attribute.index_name %><%= attribute.inject_index_options %>
