@@ -1,7 +1,7 @@
 //= require cocoon
 //= require masonry-docs.min
 //= require select2/select2
-//= require jquery.expander/jquery.expander
+//= require jquery-expander/jquery.expander
 //= require leaflet/leaflet
 
 (function($, window, document) {
